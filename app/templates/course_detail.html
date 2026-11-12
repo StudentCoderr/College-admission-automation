@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ course.name }} — {{ app_name }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('main.courses') }}">&larr; All courses</a></p>
+
+<article class="card course-detail">
+  <div class="course-ico {{ 'diploma' if course.program_type == 'diploma' else '' }}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"></path></svg>
+  </div>
+  <div class="course-card-top">
+    <span class="badge">{{ course.code }}</span>
+    <span class="pill {{ 'pill-diploma' if course.program_type == 'diploma' else 'pill-degree' }}">
+      {{ (course.program_type or 'degree')|title }}
+    </span>
+    {% if course.is_active %}
+      <span class="pill status-approved">Accepting applications</span>
+    {% else %}
+      <span class="pill status-rejected">Not accepting applications</span>
+    {% endif %}
+  </div>
+
+  <h1>{{ course.name }}</h1>
+  <p class="muted">{{ course.description or "No description provided." }}</p>
+
+  <dl class="details">
+    <dt>Course code</dt><dd>{{ course.code }}</dd>
+    <dt>Programme type</dt><dd>{{ (course.program_type or 'degree')|title }}</dd>
+    <dt>Duration</dt><dd>{{ course.duration_years }} year(s)</dd>
+    <dt>Eligibility</dt><dd>{{ course.eligibility or "Contact the admissions office." }}</dd>
+    <dt>Eligible for</dt>
+    <dd>{% if course.eligible_qualifications %}
+          {% for q in course.eligible_qualifications %}{{ QUALIFICATION_LABELS.get(q, q) }}{% if not loop.last %}, {% endif %}{% endfor %}
+        {% else %}All qualifications (SSLC, PUC, ITI){% endif %}</dd>
+    <dt>Annual tuition fee</dt>
+    <dd>{% if course.tuition_fee %}₹{{ "{:,.2f}".format(course.tuition_fee) }}{% else %}Contact the admissions office.{% endif %}</dd>
+    <dt>Available seats</dt><dd>{{ course.seats_total }}</dd>
+    <dt>Status</dt><dd>{{ "Active" if course.is_active else "Inactive" }}</dd>
+  </dl>
+
+  <div class="course-actions">
+    {% if course.is_active %}
+      {% if current_user.is_authenticated and not current_user.is_admin %}
+        <a class="btn" href="{{ url_for('student.apply') }}">Apply for this course</a>
+      {% elif not current_user.is_authenticated %}
+        <a class="btn" href="{{ url_for('auth.register') }}">Create an account &amp; apply</a>
+        <a class="btn btn-outline" href="{{ url_for('auth.login') }}">Login</a>
+      {% endif %}
+    {% else %}
+      <p class="muted">This course is currently not accepting applications.</p>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}

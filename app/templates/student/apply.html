@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ "Edit application" if application else "New application" }} — {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">{{ "Edit application" if application else "Admission application" }}</span>
+    <h1>{{ "Edit your application" if application else "Admission application" }}</h1>
+    <p class="muted">
+      Fields marked with <strong>*</strong> are required. Your contact details
+      are filled in from your profile — update your profile if they change.
+    </p>
+  </div>
+  {% if application %}
+    <a class="btn btn-outline" href="{{ url_for('student.application_detail', application_id=application.id) }}">&larr; Back to application</a>
+  {% else %}
+    <a class="btn btn-outline" href="{{ url_for('student.dashboard') }}">&larr; Back to dashboard</a>
+  {% endif %}
+</div>
+
+{% if errors %}
+  <div class="flash flash-danger">Please correct the highlighted fields and try again.</div>
+{% endif %}
+
+{% include "student/_form_fields.html" %}
+{% endblock %}

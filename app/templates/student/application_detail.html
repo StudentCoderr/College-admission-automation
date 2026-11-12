@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% block title %}Application {{ application.application_number or "(draft)" }} — {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">
+      {% if application.application_number %}Application {{ application.application_number }}{% else %}Draft application{% endif %}
+    </span>
+    <h1>
+      {% if application.application_number %}
+        Application {{ application.application_number }}
+      {% else %}
+        Draft application
+      {% endif %}
+    </h1>
+    <p class="muted">
+      Status: <span class="pill status-{{ application.status }}">{{ status_labels.get(application.status, application.status) }}</span>
+    </p>
+  </div>
+  <div class="actions">
+    <a class="btn btn-outline" href="{{ url_for('student.dashboard') }}">&larr; Dashboard</a>
+    {% if editable %}
+      <a class="btn btn-outline" href="{{ url_for('student.edit_application', application_id=application.id) }}">Edit details</a>
+    {% endif %}
+    {% if editable and application.status == 'draft' %}
+      <form method="post" action="{{ url_for('student.submit_application', application_id=application.id) }}" class="inline"
+            data-confirm-message="Submit this application? You will not be able to edit it afterwards."
+            data-confirm-title="Submit application"
+            data-confirm-label="Submit"
+            data-confirm-kind="btn-success">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-success" type="submit" data-loading="Submitting…">Submit application</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+{% if application.admin_note %}
+  <div class="notice notice-warning">
+    <span class="nt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01"></path><circle cx="12" cy="12" r="10"></circle></svg></span>
+    <p><strong>Note from the admissions office:</strong> {{ application.admin_note }}</p>
+  </div>
+{% endif %}
+
+{% if application.status != 'rejected' %}
+<section class="card">
+  <h2>Progress</h2>
+  {% set idx = {'draft':0,'submitted':1,'under_review':2,'correction_requested':2,'approved':3,'rejected':-1}.get(application.status, 0) %}
+  <div class="progress-track" aria-label="Admission progress">
+    {% set steps = [
+      {'key':'draft','label':'Started'},
+      {'key':'submitted','label':'Submitted'},
+      {'key':'under_review','label':'Under review'},
+      {'key':'approved','label':'Approved'}
+    ] %}
+    {% for step in steps %}
+      <div class="progress-step {% if loop.index0 < idx %}done{% elif loop.index0 == idx %}{{ 'done' if application.status == 'approved' else ('' if application.status == 'correction_requested' else 'current') }}{% endif %}">
+        <span class="p-dot">
+          {% if loop.index0 < idx or application.status == 'approved' %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+          {% elif loop.index0 == idx and application.status == 'correction_requested' %}
+            !
+          {% else %}{{ loop.index }}{% endif %}
+        </span>
+        <span class="p-label">{{ step.label }}</span>
+      </div>
+    {% endfor %}
+  </div>
+  {% if application.status == 'correction_requested' %}
+    <p class="muted small-note">An update has been requested — edit your details and re-submit.</p>
+  {% endif %}
+</section>
+{% else %}
+<section class="card">
+  <div class="notice notice-danger">
+    <span class="nt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M15 9l-6 6M9 9l6 6"></path></svg></span>
+    <p>This application was rejected{% if application.admin_note %}: {{ application.admin_note }}{% else %}.{% endif %} Please contact the admissions office for further guidance.</p>
+  </div>
+</section>
+{% endif %}
+
+<div class="grid grid-2">
+  <section class="card">
+    <h2>Personal</h2>
+    <dl class="details">
+      <dt>Name</dt><dd>{{ person_name(application) }}</dd>
+      <dt>Date of birth</dt><dd>{{ application.date_of_birth or "—" }}</dd>
+      <dt>Gender</dt><dd>{{ (application.gender or "—")|title }}</dd>
+      <dt>Category</dt><dd>{{ (application.category or "—")|upper }}</dd>
+      <dt>Nationality</dt><dd>{{ application.nationality or "—" }}</dd>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2>Contact</h2>
+    <dl class="details">
+      <dt>Email</dt><dd>{{ application.email or "—" }}</dd>
+      <dt>Phone</dt><dd>{{ application.phone or "—" }}</dd>
+      <dt>Address</dt><dd>{{ application.address_line or "—" }}</dd>
+      <dt>City / State</dt><dd>{{ application.city or "—" }}, {{ application.state or "—" }}</dd>
+      <dt>Postal code</dt><dd>{{ application.postal_code or "—" }}</dd>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2>Academic</h2>
+    <dl class="details">
+      {% set qual = (application.qualifying_exam or "").lower() %}
+      {% set inst_labels = {"sslc": "School name", "puc": "College name", "iti": "ITI institute name"} %}
+      <dt>Qualification</dt><dd>{{ QUALIFICATION_LABELS.get(qual, application.qualifying_exam or "—") }}</dd>
+      <dt>{{ inst_labels.get(qual, "School / Institution") }}</dt>
+      <dd>{{ application.institution_name or application.school_name or "—" }}</dd>
+      {% if qual in ['sslc', 'puc'] %}
+        <dt>Board</dt><dd>{{ application.board_university or "—" }}</dd>
+      {% endif %}
+      {% if qual == 'puc' %}
+        <dt>Stream</dt><dd>{{ (application.stream or "—")|title }}</dd>
+      {% endif %}
+      {% if qual == 'iti' %}
+        <dt>Trade / specialization</dt><dd>{{ application.trade or "—" }}</dd>
+        <dt>Affiliation</dt><dd>{{ (application.affiliation or "Not applicable")|upper }}</dd>
+      {% endif %}
+      <dt>Registration / roll number</dt><dd>{{ application.roll_number or "—" }}</dd>
+      <dt>Year of passing</dt><dd>{{ application.passing_year or "—" }}</dd>
+      <dt>Marks</dt><dd>{{ application.marks_obtained or "—" }} / {{ application.marks_total or "—" }}</dd>
+      <dt>Percentage</dt><dd>{{ application.percentage or "—" }}%</dd>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2>Preferred course</h2>
+    {% if application.courses %}
+      <div class="course-card-top" style="margin-bottom:.5rem;">
+        <strong>{{ application.courses.name }}</strong>
+        <span class="badge">{{ application.courses.code }}</span>
+      </div>
+      <p class="muted small-note">
+        {{ (application.courses.program_type or 'degree')|title }} · {{ application.courses.duration_years }} year(s)
+        {% if application.courses.tuition_fee %} · ₹{{ "{:,.2f}".format(application.courses.tuition_fee) }}/year{% endif %}
+      </p>
+    {% else %}
+      <p class="muted">No course selected.</p>
+    {% endif %}
+    <h3>Timeline</h3>
+    <ul class="timeline">
+      <li>Created: {{ application.created_at[:19].replace('T',' ') if application.created_at else "—" }}</li>
+      {% if application.submitted_at %}<li>Submitted: {{ application.submitted_at[:19].replace('T',' ') }}</li>{% endif %}
+      {% if application.reviewed_at %}<li>Reviewed: {{ application.reviewed_at[:19].replace('T',' ') }}</li>{% endif %}
+    </ul>
+  </section>
+</div>
+
+<section class="card" id="documents">
+  <h2>Documents</h2>
+  {% if documents %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Type</th><th>File</th><th>Verified</th><th></th></tr></thead>
+    <tbody>
+      {% for doc in documents %}
+      <tr>
+        <td>{{ document_types.get(doc.doc_type, doc.doc_type) }}</td>
+        <td>{{ doc.file_name }}</td>
+        <td>{% if doc.is_verified %}<span class="pill status-approved">Verified</span>{% else %}<span class="pill">Pending</span>{% endif %}</td>
+        <td class="row-actions">
+          <a class="btn btn-sm btn-outline" target="_blank" rel="noopener" href="{{ url_for('student.view_document', document_id=doc.id) }}">View</a>
+          {% if editable %}
+          <form method="post" action="{{ url_for('student.delete_document', document_id=doc.id) }}" class="inline"
+                data-confirm-message="Remove this document?">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">No documents uploaded yet.</p>
+  {% endif %}
+
+  {% if editable %}
+  <hr class="divider">
+  <h3>Upload a document</h3>
+  <form method="post" enctype="multipart/form-data"
+        action="{{ url_for('student.upload_document', application_id=application.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="grid grid-2">
+      <div class="field">
+        <label for="doc_type">Document type</label>
+        <select id="doc_type" name="doc_type" required>
+          {% for value, label in document_types.items() %}
+            <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="file">File (PDF, JPG or PNG, max 5 MB)</label>
+        <input type="file" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
+      </div>
+    </div>
+    <button class="btn" type="submit" data-loading="Uploading…">Upload document</button>
+  </form>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Status history</h2>
+  {% if history %}
+  <ul class="timeline">
+    {% for item in history %}
+      <li>
+        <span class="pill status-{{ item.status }}">{{ status_labels.get(item.status, item.status) }}</span>
+        {% if item.note %}<span>{{ item.note }}</span>{% endif %}
+        <small class="muted">{{ item.created_at[:19].replace('T',' ') if item.created_at else "" }}</small>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p class="muted">No history yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

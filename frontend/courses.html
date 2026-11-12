@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Courses — Evergreen Institute of Technology</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body data-page="courses">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb"><a href="index.html">Home</a> <span>/ Courses</span></div>
+        <h1>Courses &amp; programmes</h1>
+        <p>Explore eligibility, duration, fees and seat availability for every programme. Click Apply to start your application with the course pre-selected.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="card filter-bar mb-3">
+          <div class="form-group grow">
+            <label class="form-label" for="courseSearch">Search</label>
+            <input class="form-control" type="search" id="courseSearch" placeholder="Search by name, code or department…">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="deptFilter">Department</label>
+            <select class="form-control" id="deptFilter">
+              <option value="">All departments</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex-between mb-2">
+          <p class="muted mb-0" id="courseCount">—</p>
+          <a class="btn btn-sm" href="admission.html">Apply now</a>
+        </div>
+
+        <div class="grid grid-3" id="courseList"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/sample-data.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/validation.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/pages/courses.js"></script>
+</body>
+</html>

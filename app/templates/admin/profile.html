@@ -1,0 +1,99 @@
+{% extends "admin/base.html" %}
+{% block title %}Admin Profile — {{ app_name }}{% endblock %}
+{% block page_title %}Admin Profile{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Account</span>
+    <h1>Administrator profile</h1>
+    <p class="muted">Manage your administrator account.</p>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.8rem;">
+      <span class="profile-avatar">{{ (current_user.full_name or 'A')[0]|upper }}</span>
+      <div>
+        <h2 style="margin:0 0 .1rem;">{{ current_user.full_name }}</h2>
+        <p class="muted" style="margin:0;">{{ current_user.email }}</p>
+      </div>
+    </div>
+    <h3>Account details</h3>
+    <dl class="details">
+      <dt>Role</dt><dd>Administrator</dd>
+      <dt>Member since</dt><dd>{{ current_user.created_at or "—" }}</dd>
+    </dl>
+    <p class="muted small-note">
+      Use strong, unique passwords. Password hashes are stored with a salted scrypt algorithm.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Change password</h2>
+    <form method="post" action="{{ url_for('admin.profile') }}" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field">
+        <label for="current_password">Current password</label>
+        <div class="password-wrap">
+          <input type="password" id="current_password" name="current_password"
+                 required autocomplete="current-password">
+          <button type="button" class="pw-toggle" data-pw-toggle="current_password"
+                  aria-label="Show or hide password" aria-pressed="false">
+            <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><path d="M1 1l22 22"></path></svg>
+          </button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="new_password">New password</label>
+        <div class="password-wrap">
+          <input type="password" id="new_password" name="new_password" minlength="8"
+                 required autocomplete="new-password">
+          <button type="button" class="pw-toggle" data-pw-toggle="new_password"
+                  aria-label="Show or hide password" aria-pressed="false">
+            <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><path d="M1 1l22 22"></path></svg>
+          </button>
+        </div>
+        <small class="hint">At least 8 characters with a letter and a number.</small>
+      </div>
+      <div class="field">
+        <label for="confirm_password">Confirm new password</label>
+        <div class="password-wrap">
+          <input type="password" id="confirm_password" name="confirm_password" minlength="8"
+                 required autocomplete="new-password">
+          <button type="button" class="pw-toggle" data-pw-toggle="confirm_password"
+                  aria-label="Show or hide password" aria-pressed="false">
+            <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><path d="M1 1l22 22"></path></svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn" type="submit" data-loading="Updating password…">Update password</button>
+    </form>
+  </section>
+</div>
+
+<section class="card">
+  <div class="section-head"><h2>My recent activity</h2></div>
+  {% if audit %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>When</th><th>Action</th><th>Details</th></tr></thead>
+    <tbody>
+      {% for entry in audit %}
+      <tr>
+        <td>{{ entry.created_at }}</td>
+        <td><span class="pill">{{ entry.action }}</span></td>
+        <td>{{ entry.details or "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">No activity recorded yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

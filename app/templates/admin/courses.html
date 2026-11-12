@@ -1,0 +1,151 @@
+{% extends "admin/base.html" %}
+{% block title %}Manage Courses — {{ app_name }}{% endblock %}
+{% block page_title %}Polytechnic Courses{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Manage courses</h1>
+    <p class="muted">
+      Add Degree or Diploma / Polytechnic courses, set eligibility, fees, seats and
+      duration, and activate only the courses currently offered.
+    </p>
+  </div>
+  <a class="btn btn-outline" href="{{ url_for('main.courses') }}" target="_blank" rel="noopener">View public catalogue</a>
+</div>
+
+{% if course_error %}
+<div class="flash flash-danger">
+  {{ course_error }} This is a database error, not an empty catalogue — please
+  try again, and check the server logs if it persists.
+</div>
+{% endif %}
+
+{% if missing_course_columns %}
+<div class="flash flash-warning">
+  This database's <code>courses</code> table is missing:
+  <strong>{{ missing_course_columns|join(', ') }}</strong>.
+  Programme type, eligibility, tuition fee and qualification rules cannot be
+  saved (they are silently ignored) until the SQL upgrade is applied. Run
+  <code>sql/upgrade_diploma.sql</code> and <code>sql/upgrade_qualifications.sql</code>,
+  or the idempotent <code>sql/schema.sql</code>, in the Supabase SQL Editor.
+</div>
+{% endif %}
+
+<section class="card">
+  <h2>Add a course</h2>
+  <form method="post" action="{{ url_for('admin.create_course') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="grid grid-4">
+      <div class="field"><label for="code">Code *</label><input id="code" name="code" maxlength="20" required placeholder="e.g. DIP-CSE"></div>
+      <div class="field"><label for="program_type">Programme type *</label>
+        <select id="program_type" name="program_type">
+          <option value="degree">Degree</option>
+          <option value="diploma">Diploma / Polytechnic</option>
+        </select>
+      </div>
+      <div class="field"><label for="duration_years">Duration (yrs) *</label><input type="number" id="duration_years" name="duration_years" min="1" max="10" value="3" required></div>
+      <div class="field"><label for="seats_total">Seats *</label><input type="number" id="seats_total" name="seats_total" min="1" max="2000" value="60" required></div>
+      <div class="field"><label for="tuition_fee">Annual tuition fee</label><input type="number" step="0.01" min="0" id="tuition_fee" name="tuition_fee" placeholder="e.g. 25000"></div>
+    </div>
+    <div class="field grow"><label for="name">Name *</label><input id="name" name="name" maxlength="150" required placeholder="e.g. Diploma in Computer Science and Engineering"></div>
+    <div class="field"><label for="eligibility">Eligibility</label><input id="eligibility" name="eligibility" maxlength="600" placeholder="e.g. Pass in SSLC / Class 10 with Mathematics and Science"></div>
+    <div class="field">
+      <label>Eligible qualifications <span class="muted">(leave none selected for "open to all")</span></label>
+      <div style="display:flex;gap:1.1rem;flex-wrap:wrap;">
+        {% for key, label in QUALIFICATION_LABELS.items() %}
+          <label style="display:inline-flex;align-items:center;gap:.35rem;">
+            <input type="checkbox" name="eligible_qualifications" value="{{ key }}"> {{ label }}
+          </label>
+        {% endfor %}
+      </div>
+      <small class="hint">Application validation checks the student's qualification against these.</small>
+    </div>
+    <div class="field"><label for="description">Description</label><input id="description" name="description" maxlength="500"></div>
+    <button class="btn" type="submit" data-loading="Adding course…">Add course</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="section-head">
+    <h2>All courses</h2>
+    <span class="muted">{{ courses|length }} total</span>
+  </div>
+  {% if courses %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Code</th><th>Name</th><th>Type</th><th>Duration</th><th>Seats</th>
+        <th>Applications</th><th>Available</th><th>Fee / yr</th><th>Status</th><th>Update</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for course in courses %}
+      <tr>
+        <td><strong>{{ course.code }}</strong></td>
+        <td>{{ course.name }}<br><small class="muted">Eligibility: {{ course.eligibility or "—" }}<br>Eligible for: {% if course.eligible_qualifications %}{% for q in course.eligible_qualifications %}{{ QUALIFICATION_LABELS.get(q, q) }}{% if not loop.last %}, {% endif %}{% endfor %}{% else %}All qualifications{% endif %}</small></td>
+        <td>
+          <span class="pill {{ 'pill-diploma' if course.program_type == 'diploma' else 'pill-degree' }}">
+            {{ (course.program_type or 'degree')|title }}
+          </span>
+        </td>
+        <td>{{ course.duration_years }} yr</td>
+        <td>{{ course.seats_total }}</td>
+        <td>{{ course.applications_count }}</td>
+        <td>{{ course.seats_available }}</td>
+        <td>{% if course.tuition_fee %}₹{{ "{:,.2f}".format(course.tuition_fee) }}{% else %}—{% endif %}</td>
+        <td>{% if course.is_active %}<span class="pill status-approved">Active</span>{% else %}<span class="pill status-rejected">Inactive</span>{% endif %}</td>
+        <td>
+          <form method="post" action="{{ url_for('admin.update_course', course_id=course.id) }}" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="code" value="{{ course.code }}">
+            <input type="hidden" name="description" value="{{ course.description or '' }}">
+            <input type="text" name="name" value="{{ course.name }}" maxlength="150" required>
+            <select name="program_type">
+              <option value="degree" {% if course.program_type != 'diploma' %}selected{% endif %}>Degree</option>
+              <option value="diploma" {% if course.program_type == 'diploma' %}selected{% endif %}>Diploma</option>
+            </select>
+            <input type="number" name="duration_years" value="{{ course.duration_years }}" min="1" max="10" required>
+            <input type="number" name="seats_total" value="{{ course.seats_total }}" min="1" max="2000" required>
+            <input type="number" step="0.01" min="0" name="tuition_fee" value="{{ course.tuition_fee if course.tuition_fee is not none else '' }}" placeholder="fee">
+            <input type="text" name="eligibility" value="{{ course.eligibility or '' }}" maxlength="600" placeholder="eligibility">
+            <span class="qual-checks">
+              {% for key, label in QUALIFICATION_LABELS.items() %}
+                <label><input type="checkbox" name="eligible_qualifications" value="{{ key }}"
+                  {% if key in (course.eligible_qualifications or []) %}checked{% endif %}> {{ label }}</label>
+              {% endfor %}
+            </span>
+            <button class="btn btn-sm" type="submit">Save</button>
+          </form>
+        </td>
+        <td>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;">
+            <form method="post" action="{{ url_for('admin.toggle_course', course_id=course.id) }}" class="inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button class="btn btn-sm btn-outline" type="submit">{{ "Deactivate" if course.is_active else "Activate" }}</button>
+            </form>
+            {% if course.applications_count %}
+              <button class="btn btn-sm btn-danger" type="button" disabled
+                      title="This course has applications. Deactivate it instead.">Delete</button>
+            {% else %}
+              <form method="post" action="{{ url_for('admin.delete_course', course_id=course.id) }}" class="inline"
+                    data-confirm-message="Permanently delete {{ course.code }} — {{ course.name }}? This cannot be undone."
+                    data-confirm-title="Delete course"
+                    data-confirm-label="Delete"
+                    data-confirm-kind="btn-danger">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+              </form>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">No courses yet. Add your first real course using the form above.</p>
+  {% endif %}
+</section>
+{% endblock %}

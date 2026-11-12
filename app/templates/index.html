@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+{% block title %}Home — {{ app_name }}{% endblock %}
+
+{% macro carousel_tools() %}
+<div class="carousel-tools">
+  <span class="swipe-hint" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5l-5 7 5 7M16 5l5 7-5 7"></path></svg>
+    Swipe
+  </span>
+  <div class="carousel-controls">
+    <button class="carousel-btn" type="button" data-carousel-prev aria-label="Scroll left">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    </button>
+    <button class="carousel-btn" type="button" data-carousel-next aria-label="Scroll right">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+    </button>
+  </div>
+</div>
+{% endmacro %}
+
+{% block content %}
+
+<!-- ============================= Hero ============================= -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <span class="eyebrow" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#c7d2fe;">Diploma / Polytechnic admissions</span>
+      <h1>Your Future Starts <span class="hero-grad">Here</span></h1>
+      <p>
+        Apply to Diploma and Polytechnic programmes entirely online. Register,
+        choose your branch, upload your documents and track your admission
+        status — all in one secure place.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-lg" href="{{ url_for('main.courses') }}">Explore Courses</a>
+        <a class="btn btn-lg btn-outline" href="{{ url_for('student.apply') if current_user.is_authenticated and not current_user.is_admin else url_for('auth.register') if not current_user.is_authenticated else url_for('admin.dashboard') }}">Apply for Admission</a>
+      </div>
+      <div class="hero-trust">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        <span>Secure, server-validated applications · documents stored safely in the cloud</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="hero-art-card">
+        <div class="hero-art-row">
+          <span class="art-ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </span>
+          <div>
+            <strong>Application submitted</strong>
+            <small>Diploma in Computer Science — under review</small>
+          </div>
+        </div>
+        <div class="hero-art-row">
+          <span class="art-ico green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4L12 14.01l-3-3"></path></svg>
+          </span>
+          <div>
+            <strong>Documents verified</strong>
+            <small>Marks card · ID proof · Photo</small>
+          </div>
+        </div>
+        <div class="hero-art-row">
+          <span class="art-ico amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+          </span>
+          <div>
+            <strong>Admission update</strong>
+            <small>Seat allocation &amp; fee instructions sent</small>
+          </div>
+        </div>
+        <div class="hero-art-chips">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+            100% online
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path><path d="M9 12l2 2 4-4"></path></svg>
+            Secure upload
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+            Live tracking
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container" style="margin-top:1.6rem;">
+
+  <!-- ===================== Quick section navigator ===================== -->
+  <nav class="home-jump" aria-label="Explore this page">
+    <span class="home-jump-label">Explore</span>
+    <a href="#about">About</a>
+    <a href="#process">How it works</a>
+    <a href="#benefits">Benefits</a>
+    <a href="#popular">Courses</a>
+    <a href="#faq">FAQs</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <!-- ===================== Public portal highlights ===================== -->
+  <section class="swipe-section home-highlights" data-carousel aria-label="Portal highlights">
+    <div class="swipe-topline">
+      <span class="swipe-kicker">Portal at a glance</span>
+      {{ carousel_tools() }}
+    </div>
+    <div class="swipe-track highlight-track highlight-strip" data-carousel-track tabindex="0" aria-label="Portal highlights carousel">
+    <div class="highlight-card">
+      <span class="stat-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"></path></svg>
+      </span>
+      <div>
+        <strong>{{ active_course_count }} active course{{ '' if active_course_count == 1 else 's' }}</strong>
+        <span>{{ 'Accepting applications now' if active_course_count else 'Check back soon for new programmes' }}</span>
+      </div>
+    </div>
+    <div class="highlight-card">
+      <span class="stat-ico green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6M22 11h-6"></path></svg>
+      </span>
+      <div><strong>100% online</strong><span>Register and apply from anywhere</span></div>
+    </div>
+    <div class="highlight-card">
+      <span class="stat-ico teal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M17 8l-5-5-5 5M12 3v12"></path></svg>
+      </span>
+      <div><strong>Secure upload</strong><span>Documents safely stored and verified</span></div>
+    </div>
+    <div class="highlight-card">
+      <span class="stat-ico violet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+      </span>
+      <div><strong>Live tracking</strong><span>Follow every review and status update</span></div>
+    </div>
+    </div>
+    <div class="carousel-progress" aria-hidden="true"><span data-carousel-progress></span></div>
+  </section>
+
+  <!-- ========================= About ========================= -->
+  <section id="about" class="card about-card" style="padding:2rem 2.2rem;">
+    <div class="grid grid-2" style="align-items:center;gap:2.4rem;">
+      <div>
+        <span class="eyebrow">About the system</span>
+        <h2>A paperless admission workflow, end to end</h2>
+        <p class="muted">
+          This portal automates the entire Diploma / Polytechnic admission
+          lifecycle — from student registration and course selection to
+          document verification and final approval. Every step is tracked, every
+          decision is recorded, and students can follow their application in
+          real time.
+        </p>
+        <ul class="meta" style="margin-top:1rem;">
+          <li>&#10003; Online registration &amp; one-time password setup</li>
+          <li>&#10003; Live course catalogue with eligibility and fees</li>
+          <li>&#10003; Document upload with verification status</li>
+          <li>&#10003; Application review, approvals &amp; reports</li>
+        </ul>
+      </div>
+      <div>
+        <span class="eyebrow">Programmes offered</span>
+        <h2>Choose your branch</h2>
+        {% if diploma_courses or degree_courses %}
+          <p class="muted small-note">Active courses currently accepting applications:</p>
+          {% if diploma_courses %}
+          <p style="margin:.4rem 0 .15rem;font-weight:700;font-size:.85rem;">Diploma / Polytechnic</p>
+          <div class="branch-chips swipe-chips" style="margin-bottom:.8rem;">
+            {% for c in diploma_courses %}
+              <a class="branch-chip" href="{{ url_for('main.course_detail', course_id=c.id) }}">
+                <span class="dot green"></span>{{ c.name }}
+              </a>
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% if degree_courses %}
+          <p style="margin:.4rem 0 .15rem;font-weight:700;font-size:.85rem;">Degree programmes</p>
+          <div class="branch-chips swipe-chips">
+            {% for c in degree_courses %}
+              <a class="branch-chip" href="{{ url_for('main.course_detail', course_id=c.id) }}">
+                <span class="dot violet"></span>{{ c.name }}
+              </a>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% else %}
+          <p class="muted">Course catalogue opens soon. Please check back.</p>
+        {% endif %}
+        <div class="course-actions" style="margin-top:1.1rem;">
+          <a class="btn" href="{{ url_for('main.courses') }}">View all courses</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= Admission process ========================= -->
+  <section id="process" class="swipe-section" data-carousel style="padding:2rem 0 1rem;">
+    <div class="section-head" style="margin-bottom:1.2rem;">
+      <div>
+        <span class="eyebrow">How it works</span>
+        <h2>Admission process in four simple steps</h2>
+      </div>
+      {{ carousel_tools() }}
+    </div>
+    <div class="swipe-track steps-track steps" data-carousel-track tabindex="0" aria-label="Admission process carousel">
+      <div class="step-card">
+        <span class="step-num">1</span>
+        <h3>Register / setup password</h3>
+        <p>Create your student account. If an administrator created it, complete the one-time password setup link.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">2</span>
+        <h3>Fill your application</h3>
+        <p>Enter personal, contact and academic details, then pick a preferred Diploma or Degree course.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">3</span>
+        <h3>Upload documents</h3>
+        <p>Attach your marks card, ID proof and photograph. Documents are verified by the admissions office.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">4</span>
+        <h3>Track your status</h3>
+        <p>Submit and follow the review from Under Review to Approved or Rejected — with full history.</p>
+      </div>
+    </div>
+    <div class="carousel-progress" aria-hidden="true"><span data-carousel-progress></span></div>
+  </section>
+
+  <!-- ========================= Benefits ========================= -->
+  <section id="benefits" class="swipe-section" data-carousel style="padding:1.2rem 0;">
+    <div class="section-head" style="margin-bottom:1.2rem;">
+      <div>
+        <span class="eyebrow">Why this portal</span>
+        <h2>Benefits of the online admission system</h2>
+      </div>
+      {{ carousel_tools() }}
+    </div>
+    <div class="swipe-track benefits-track" data-carousel-track tabindex="0" aria-label="Benefits carousel">
+      <div class="feature-tile">
+        <span class="icon-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+        </span>
+        <div><h4>Save time</h4><p>No queues, printouts or couriers — apply and track anytime, from any device.</p></div>
+      </div>
+      <div class="feature-tile">
+        <span class="icon-badge bg-success">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4L12 14.01l-3-3"></path></svg>
+        </span>
+        <div><h4>Live status tracking</h4><p>Every status change and admin note is recorded and visible to the applicant.</p></div>
+      </div>
+      <div class="feature-tile">
+        <span class="icon-badge bg-teal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        </span>
+        <div><h4>Secure &amp; validated</h4><p>Password hashes, CSRF protection and server-side validation on every form.</p></div>
+      </div>
+      <div class="feature-tile">
+        <span class="icon-badge bg-warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"></path><path d="M4 10h16M10 4v16"></path></svg>
+        </span>
+        <div><h4>Document checklist</h4><p>Know exactly which documents are required and which are still pending verification.</p></div>
+      </div>
+      <div class="feature-tile">
+        <span class="icon-badge bg-violet">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8"></path></svg>
+        </span>
+        <div><h4>Accountable decisions</h4><p>Every review action is audited with the administrator, time and reason recorded.</p></div>
+      </div>
+      <div class="feature-tile">
+        <span class="icon-badge bg-danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg>
+        </span>
+        <div><h4>Reports &amp; analytics</h4><p>Admins get live charts of applications by status, by course and per month.</p></div>
+      </div>
+    </div>
+    <div class="carousel-progress" aria-hidden="true"><span data-carousel-progress></span></div>
+  </section>
+
+  <!-- ========================= Popular courses ========================= -->
+  {% if courses %}
+  <section id="popular" class="swipe-section" data-carousel style="padding:1.2rem 0;">
+    <div class="section-head" style="margin-bottom:1.2rem;">
+      <div>
+        <span class="eyebrow">Browse</span>
+        <h2>Popular courses</h2>
+      </div>
+      <div class="section-head-actions">
+        <a href="{{ url_for('main.courses') }}">View all courses &rarr;</a>
+        {{ carousel_tools() }}
+      </div>
+    </div>
+    <div class="swipe-track popular-track course-grid" data-carousel-track tabindex="0" aria-label="Popular courses carousel">
+      {% for course in courses %}
+        <article class="card course-card">
+          <div class="course-ico {{ 'diploma' if course.program_type == 'diploma' else '' }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"></path></svg>
+          </div>
+          <div class="course-card-top">
+            <span class="badge">{{ course.code }}</span>
+            <span class="pill {{ 'pill-diploma' if course.program_type == 'diploma' else 'pill-degree' }}">
+              {{ (course.program_type or 'degree')|title }}
+            </span>
+          </div>
+          <h3>{{ course.name }}</h3>
+          <p>{{ course.description or "No description provided." }}</p>
+          <ul class="meta">
+            <li><strong>Duration:</strong> {{ course.duration_years }} year(s)</li>
+            <li><strong>Eligibility:</strong> {{ course.eligibility or "Contact the admissions office." }}</li>
+          </ul>
+          <div class="course-actions">
+            <a class="btn btn-sm btn-outline" href="{{ url_for('main.course_detail', course_id=course.id) }}">View details</a>
+            {% if not current_user.is_authenticated or not current_user.is_admin %}
+              <a class="btn btn-sm" href="{{ url_for('student.apply') if current_user.is_authenticated else url_for('auth.register') }}">Apply now</a>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+    <div class="carousel-progress" aria-hidden="true"><span data-carousel-progress></span></div>
+  </section>
+  {% endif %}
+
+  <!-- ========================= FAQ ========================= -->
+  <section id="faq" class="swipe-section" data-carousel style="padding:1.2rem 0;">
+    <div class="section-head" style="margin-bottom:1.2rem;">
+      <div>
+        <span class="eyebrow">Help</span>
+        <h2>Frequently asked questions</h2>
+      </div>
+      {{ carousel_tools() }}
+    </div>
+    <div class="swipe-track faq-track faq-list" data-carousel-track tabindex="0" aria-label="Frequently asked questions carousel">
+      <div class="faq-item open">
+        <button class="faq-q" type="button">Who can apply through this portal?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="faq-a">Anyone who meets the eligibility shown for the chosen course. Diploma / Polytechnic programmes typically require a pass in SSLC / Class 10 with Mathematics and Science — check the course page for the exact eligibility.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">How do I get my login credentials?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="faq-a">Register with a valid email address and choose a strong password. If an administrator creates your account, you will receive a one-time setup link to choose your own password — passwords are never shared or stored in plain text.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">Which documents do I need to upload?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="faq-a">A marks card / transcript is mandatory before submission. We also accept a government ID proof, a passport-size photograph, a signature, and a transfer / migration certificate where applicable. Files can be PDF, JPG or PNG up to 5&nbsp;MB.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">Can I edit my application after submitting it?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="faq-a">Once submitted, an application cannot be edited by the student. If the admissions office finds something missing they will request a correction, which re-opens the application for you.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">How do I track my admission status?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="faq-a">Log in and open your dashboard. Each application shows its current status and a full history of changes — Draft, Submitted, Under Review, Correction Requested, Approved or Rejected.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button">What happens if my application is rejected?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+        </button>
+        <div class="faq-a">The admissions office records the reason on your application. You can contact the office or, where seats remain available, start a fresh application for another course.</div>
+      </div>
+    </div>
+    <div class="carousel-progress" aria-hidden="true"><span data-carousel-progress></span></div>
+  </section>
+
+  <!-- ========================= Contact ========================= -->
+  <section id="contact" class="swipe-section" data-carousel style="padding:1.4rem 0 0.6rem;">
+    <div class="section-head" style="margin-bottom:1.2rem;">
+      <div>
+        <span class="eyebrow">Contact</span>
+        <h2>Get in touch</h2>
+      </div>
+      {{ carousel_tools() }}
+    </div>
+    <div class="swipe-track contact-track contact-grid" data-carousel-track tabindex="0" aria-label="Contact options carousel">
+      <div class="card contact-card">
+        <div class="contact-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>
+        </div>
+        <h3>Admissions office</h3>
+        <p class="muted">Questions about eligibility, documents or your application status? Write to the admissions office and we will get back to you.</p>
+        <p><a href="mailto:admissions@college.edu">admissions@college.edu</a></p>
+      </div>
+      <div class="card contact-card">
+        <div class="contact-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+        </div>
+        <h3>Office hours</h3>
+        <p class="muted">Monday – Saturday, 9:00 AM – 5:00 PM</p>
+        <p class="muted">Applications are reviewed in the order they are received.</p>
+      </div>
+      <div class="card contact-card">
+        <div class="contact-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>
+        </div>
+        <h3>Browse courses</h3>
+        <p class="muted">Compare Diploma and Degree programmes, eligibility and available seats before you apply.</p>
+        <p><a href="{{ url_for('main.courses') }}">Explore the course catalogue &rarr;</a></p>
+      </div>
+    </div>
+    <div class="carousel-progress" aria-hidden="true"><span data-carousel-progress></span></div>
+  </section>
+
+  <!-- ========================= CTA ========================= -->
+  <section style="padding:1.2rem 0 2rem;">
+    <div class="cta-band">
+      <h2>Ready to begin your admission journey?</h2>
+      <p>Create your account and start your application in minutes. No paperwork, everything online and trackable.</p>
+      <div class="hero-actions" style="justify-content:center;">
+        {% if current_user.is_authenticated and not current_user.is_admin %}
+          <a class="btn btn-lg" href="{{ url_for('student.apply') }}">Apply for Admission</a>
+          <a class="btn btn-lg btn-outline" href="{{ url_for('student.dashboard') }}">Track status</a>
+        {% elif current_user.is_authenticated and current_user.is_admin %}
+          <a class="btn btn-lg" href="{{ url_for('admin.dashboard') }}">Go to admin dashboard</a>
+        {% else %}
+          <a class="btn btn-lg" href="{{ url_for('auth.register') }}">Create an account</a>
+          <a class="btn btn-lg btn-outline" href="{{ url_for('auth.login') }}">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/home.js') }}?v=20261109"></script>
+{% endblock %}

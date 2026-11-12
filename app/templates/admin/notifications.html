@@ -1,0 +1,137 @@
+{% extends "admin/base.html" %}
+{% block title %}Notifications — {{ app_name }}{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Action centre</span>
+    <h1>Notifications</h1>
+    <p class="muted">Everything waiting for your attention, in one place — all values read live from Supabase.</p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn-outline" href="{{ url_for('admin.applications') }}">Review applications</a>
+  </div>
+</div>
+
+<div class="grid grid-4 stats">
+  <div class="stat stat-warning">
+    <span class="stat-value">{{ pending }}</span>
+    <span class="stat-label">In review / pending</span>
+  </div>
+  <div class="stat stat-success">
+    <span class="stat-value">{{ counts.approved }}</span>
+    <span class="stat-label">Approved</span>
+  </div>
+  <div class="stat stat-danger">
+    <span class="stat-value">{{ counts.rejected }}</span>
+    <span class="stat-label">Rejected</span>
+  </div>
+  <div class="stat stat-info">
+    <span class="stat-value">{{ unverified_count }}</span>
+    <span class="stat-label">Unverified documents</span>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <div class="section-head">
+      <h2>Latest applications</h2>
+      <a href="{{ url_for('admin.applications') }}">View all &rarr;</a>
+    </div>
+    {% if recent_apps %}
+    <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Application #</th><th>Applicant</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for app in recent_apps %}
+        <tr>
+          <td><a href="{{ url_for('admin.application_detail', application_id=app.id) }}">{{ app.application_number or "(draft)" }}</a></td>
+          <td>{{ person_name(app) }}</td>
+          <td><span class="pill status-{{ app.status }}">{{ status_labels.get(app.status, app.status) }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    {% else %}
+      <p class="muted">No applications yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <h2>Documents awaiting verification</h2>
+      <a href="{{ url_for('admin.applications') }}">Review applications &rarr;</a>
+    </div>
+    {% if unverified %}
+    <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th>Document</th><th>Application</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for doc in unverified %}
+        <tr>
+          <td>{{ document_types.get(doc.doc_type, doc.doc_type|replace('_',' ')|title) }}</td>
+          <td>
+            {% set app_ref = doc.applications or {} %}
+            {% if app_ref.get('application_number') %}
+              <a href="{{ url_for('admin.application_detail', application_id=doc.application_id) }}">{{ app_ref.application_number }}</a>
+            {% else %}
+              <a href="{{ url_for('admin.application_detail', application_id=doc.application_id) }}">Application</a>
+            {% endif %}
+          </td>
+          <td><span class="pill status-{{ app_ref.get('status') or 'draft' }}">{{ status_labels.get(app_ref.get('status'), app_ref.get('status') or 'Draft') }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    {% else %}
+      <p class="muted">No documents awaiting verification. Everything is up to date.</p>
+    {% endif %}
+  </section>
+</div>
+
+{% if announcements %}
+<section class="card">
+  <div class="section-head"><h2>Published announcements</h2></div>
+  <ul class="notice-list">
+    {% for item in announcements %}
+    <li>
+      <span class="notice-chip notice-info">Announcement</span>
+      <span>
+        <strong>{{ item.title or "Announcement" }}</strong>
+        {% if item.body %}<p class="muted">{{ item.body }}</p>{% endif %}
+        {% if item.published_at %}<small class="muted">{{ item.published_at[:19].replace('T',' ') }}</small>{% endif %}
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="card">
+  <div class="section-head">
+    <h2>Recent administrative activity</h2>
+    <a href="{{ url_for('admin.reports') }}">Full reports &rarr;</a>
+  </div>
+  {% if recent %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>When</th><th>Administrator</th><th>Action</th><th>Details</th></tr></thead>
+    <tbody>
+      {% for entry in recent %}
+      <tr>
+        <td>{{ entry.created_at }}</td>
+        <td>{{ entry.actor_email or "—" }}</td>
+        <td><span class="pill">{{ entry.action }}</span></td>
+        <td>{{ entry.details or "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">No administrative activity recorded yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

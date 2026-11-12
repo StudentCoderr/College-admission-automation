@@ -1,0 +1,39 @@
+# ---------------------------------------------------------------------------
+# Render Blueprint - deploy the web service from a GitHub repository.
+# In Render: New + -> Blueprint -> pick this repo.
+# Set the secret values (marked sync: false) in the Render dashboard.
+# ---------------------------------------------------------------------------
+services:
+  - type: web
+    name: college-admission-system
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.4"
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: admission-documents
+      - key: MAX_CONTENT_LENGTH
+        value: "5242880"
+      - key: SIGNED_URL_EXPIRES_IN
+        value: "300"
+      - key: API_CSRF_ENABLED
+        value: "true"
+      # Allowed browser origins (comma separated). Include e.g.
+      # http://localhost:8081 for the stand-alone admin console in development
+      # and your production site origin when serving the console separately.
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false

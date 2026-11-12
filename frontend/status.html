@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Track Application — Evergreen Institute of Technology</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body data-page="status">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb"><a href="index.html">Home</a> <span>/ Track status</span></div>
+        <h1>Track your application</h1>
+        <p>Enter your application number and the email used during registration to see your admission status.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="track-panel">
+        <div class="card">
+          <div id="trackAlert" class="alert alert-error" hidden></div>
+          <form id="trackForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="number">Application number <span class="req">*</span></label>
+                <input class="form-control" id="number" name="number" placeholder="ADM-2026-00001" data-validate="required" required>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="email">Registered email <span class="req">*</span></label>
+                <input class="form-control" type="email" id="email" name="email" placeholder="you@example.com" data-validate="required email" required>
+                <span class="form-error"></span>
+              </div>
+            </div>
+            <button class="btn btn-lg" type="submit">Track application</button>
+          </form>
+        </div>
+
+        <div id="myApplications"></div>
+        <div id="statusResult"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/sample-data.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/validation.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/pages/status.js"></script>
+</body>
+</html>

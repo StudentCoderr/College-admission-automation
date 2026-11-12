@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apply Online — Evergreen Institute of Technology</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body data-page="admission" data-guard="student">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb"><a href="index.html">Home</a> <span>/ Apply online</span></div>
+        <h1>Admission application</h1>
+        <p>Complete all sections below. Fields marked <span style="color:#fecaca">*</span> are required. You can save a draft and return at any time.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container-narrow">
+        <div id="formAlert" class="alert alert-info" hidden></div>
+
+        <form id="admissionForm" novalidate>
+          <!-- Stepper -->
+          <div class="stepper" id="stepper">
+            <div class="step active" data-step="1">Personal</div>
+            <div class="step" data-step="2">Contact</div>
+            <div class="step" data-step="3">Academic</div>
+            <div class="step" data-step="4">Course</div>
+            <div class="step" data-step="5">Documents</div>
+            <div class="step" data-step="6">Review</div>
+          </div>
+
+          <!-- Step 1: Personal -->
+          <section class="form-step card" data-step="1">
+            <h2>Personal information</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="firstName">First name <span class="req">*</span></label>
+                <input class="form-control" id="firstName" name="firstName" maxlength="120" data-validate="required min:2" required>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="middleName">Middle name <span class="muted">(optional)</span></label>
+                <input class="form-control" id="middleName" name="middleName" maxlength="120">
+                <span class="form-error"></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="lastName">Last name <span class="muted">(optional)</span></label>
+                <input class="form-control" id="lastName" name="lastName" maxlength="120">
+                <span class="form-error"></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="dateOfBirth">Date of birth <span class="req">*</span></label>
+                <input class="form-control" type="date" id="dateOfBirth" name="dateOfBirth" data-validate="required date datePast" required>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="gender">Gender <span class="req">*</span></label>
+                <select class="form-control" id="gender" name="gender" data-validate="required" required>
+                  <option value="">Select…</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+                <span class="form-error"></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="category">Category</label>
+                <select class="form-control" id="category" name="category">
+                  <option value="General">General</option>
+                  <option value="OBC">OBC</option>
+                  <option value="SC">SC</option>
+                  <option value="ST">ST</option>
+                  <option value="EWS">EWS</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="nationality">Nationality</label>
+                <input class="form-control" id="nationality" name="nationality" value="Indian" maxlength="60">
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 2: Contact -->
+          <section class="form-step card" data-step="2" hidden>
+            <h2>Contact details</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="email">Contact email <span class="req">*</span></label>
+                <input class="form-control" type="email" id="email" name="email" data-validate="required email" required>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="phone">Phone number <span class="req">*</span></label>
+                <input class="form-control" type="tel" id="phone" name="phone" data-validate="required phone" required>
+                <span class="form-error"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="address">Address <span class="req">*</span></label>
+              <input class="form-control" id="address" name="address" maxlength="200" data-validate="required" required>
+              <span class="form-error"></span>
+            </div>
+            <div class="form-row-3">
+              <div class="form-group">
+                <label class="form-label" for="city">City <span class="req">*</span></label>
+                <input class="form-control" id="city" name="city" maxlength="80" data-validate="required" required>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="state">State <span class="req">*</span></label>
+                <input class="form-control" id="state" name="state" maxlength="80" data-validate="required" required>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="postalCode">Postal code <span class="req">*</span></label>
+                <input class="form-control" id="postalCode" name="postalCode" maxlength="12" data-validate="required" required>
+                <span class="form-error"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="country">Country</label>
+              <input class="form-control" id="country" name="country" value="India" maxlength="60">
+            </div>
+          </section>
+
+          <!-- Step 3: Academic -->
+          <section class="form-step card" data-step="3" hidden>
+            <h2>Academic details</h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="qualifyingExam">Qualifying exam <span class="req">*</span></label>
+                <input class="form-control" id="qualifyingExam" name="qualifyingExam" placeholder="e.g. Class 12 (Science)" maxlength="80" data-validate="required" required>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="board">Board / University <span class="req">*</span></label>
+                <input class="form-control" id="board" name="board" maxlength="120" data-validate="required" required>
+                <span class="form-error"></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="school">School / Institution</label>
+                <input class="form-control" id="school" name="school" maxlength="150">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="passingYear">Passing year <span class="req">*</span></label>
+                <input class="form-control" type="number" id="passingYear" name="passingYear" min="1950" max="2100" data-validate="required number minValue:1950 maxValue:2100" required>
+                <span class="form-error"></span>
+              </div>
+            </div>
+            <div class="form-row-3">
+              <div class="form-group">
+                <label class="form-label" for="marksObtained">Marks obtained <span class="req">*</span></label>
+                <input class="form-control" type="number" step="0.01" id="marksObtained" name="marksObtained" data-validate="required number minValue:0" required>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="marksTotal">Total marks <span class="req">*</span></label>
+                <input class="form-control" type="number" step="0.01" id="marksTotal" name="marksTotal" data-validate="required number minValue:1" required>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="percentage">Percentage</label>
+                <input class="form-control" type="number" step="0.01" id="percentage" name="percentage" placeholder="Auto-calculated">
+                <span class="form-text">Leave blank to calculate automatically.</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 4: Course -->
+          <section class="form-step card" data-step="4" hidden>
+            <h2>Preferred course</h2>
+            <div class="form-group">
+              <label class="form-label" for="courseId">Select a programme <span class="req">*</span></label>
+              <select class="form-control" id="courseId" name="courseId" data-validate="required" required>
+                <option value="">Loading courses…</option>
+              </select>
+              <span class="form-error"></span>
+            </div>
+            <div id="coursePreview" class="mt-2"></div>
+          </section>
+
+          <!-- Step 5: Documents -->
+          <section class="form-step card" data-step="5" hidden>
+            <h2>Upload documents</h2>
+            <p class="muted small">Accepted formats: PDF, JPG, PNG. Maximum 5 MB per file.</p>
+
+            <div class="form-group">
+              <label class="form-label" for="docMarks">Marks card / transcript <span class="req">*</span></label>
+              <input class="form-control" type="file" id="docMarks" name="docMarks" data-file-input accept=".pdf,.jpg,.jpeg,.png">
+              <ul class="file-list"></ul>
+              <span class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="docId">Government ID proof</label>
+              <input class="form-control" type="file" id="docId" name="docId" data-file-input accept=".pdf,.jpg,.jpeg,.png">
+              <ul class="file-list"></ul>
+              <span class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="docPhoto">Passport-size photograph</label>
+              <input class="form-control" type="file" id="docPhoto" name="docPhoto" data-file-input accept=".jpg,.jpeg,.png">
+              <ul class="file-list"></ul>
+              <span class="form-error"></span>
+            </div>
+          </section>
+
+          <!-- Step 6: Review -->
+          <section class="form-step card" data-step="6" hidden>
+            <h2>Review &amp; submit</h2>
+            <p class="muted small">Please check your details carefully. You can go back to edit any section.</p>
+            <div id="reviewSummary"></div>
+          </section>
+
+          <!-- Navigation -->
+          <div class="flex-between mt-3 flex-wrap gap-sm">
+            <button type="button" class="btn btn-ghost" id="prevBtn">← Back</button>
+            <div class="flex gap-sm">
+              <button type="button" class="btn btn-outline" id="draftBtn">Save draft</button>
+              <button type="button" class="btn" id="nextBtn">Next →</button>
+              <button type="submit" class="btn btn-success hidden" id="submitBtn">Submit application</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/sample-data.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/validation.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/pages/admission.js"></script>
+</body>
+</html>

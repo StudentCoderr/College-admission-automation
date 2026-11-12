@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register — Evergreen Institute of Technology</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body data-page="register">
+  <div id="site-header"></div>
+
+  <main>
+    <div class="auth-shell">
+      <aside class="auth-aside">
+        <span class="eyebrow" style="background:rgba(255,255,255,.15);border-color:transparent;color:#fff">Get started</span>
+        <h2>Create your account</h2>
+        <p style="color:#dbeafe">Registration is free and takes less than a minute. You will use your email to log in and track applications.</p>
+        <ul>
+          <li>One account for all applications</li>
+          <li>Save drafts and finish later</li>
+          <li>Upload documents securely</li>
+          <li>Get notified when your status changes</li>
+        </ul>
+      </aside>
+
+      <section class="auth-main">
+        <div class="auth-card card card-pad-lg">
+          <h1 style="font-size:1.6rem">Student registration</h1>
+          <p class="muted small">Enter your details to create a student account.</p>
+
+          <div id="formAlert" class="alert alert-error" hidden></div>
+
+          <form id="registerForm" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="fullName">Full name <span class="req">*</span></label>
+              <input class="form-control" type="text" id="fullName" name="fullName" maxlength="120"
+                     placeholder="e.g. Arjun Sharma" autocomplete="name"
+                     data-validate="required min:3 max:120" required>
+              <span class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="email">Email address <span class="req">*</span></label>
+              <input class="form-control" type="email" id="email" name="email" maxlength="254"
+                     placeholder="you@example.com" autocomplete="email"
+                     data-validate="required email" required>
+              <span class="form-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="phone">Phone number</label>
+              <input class="form-control" type="tel" id="phone" name="phone" maxlength="20"
+                     placeholder="+91 98765 43210" autocomplete="tel"
+                     data-validate="phone">
+              <span class="form-text">Optional, but recommended for admission updates.</span>
+              <span class="form-error"></span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="password">Password <span class="req">*</span></label>
+                <div class="input-affix">
+                  <input class="form-control" type="password" id="password" name="password"
+                         placeholder="At least 8 characters" autocomplete="new-password"
+                         data-validate="password" required>
+                  <button type="button" class="toggle-affix" data-toggle-password="password" aria-label="Show password">Show</button>
+                </div>
+                <span class="form-error"></span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="confirmPassword">Confirm password <span class="req">*</span></label>
+                <div class="input-affix">
+                  <input class="form-control" type="password" id="confirmPassword" name="confirmPassword"
+                         placeholder="Re-enter password" autocomplete="new-password"
+                         data-validate="required match:password" required>
+                  <button type="button" class="toggle-affix" data-toggle-password="confirmPassword" aria-label="Show password">Show</button>
+                </div>
+                <span class="form-error"></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="checkbox">
+                <input type="checkbox" id="terms" name="terms">
+                <span>I agree to the <a href="#">terms of use</a> and <a href="#">privacy policy</a>, and confirm the information I provide is accurate. <span class="req">*</span></span>
+              </label>
+            </div>
+
+            <button class="btn btn-block btn-lg" type="submit">Create account</button>
+          </form>
+
+          <p class="muted small center mt-3 mb-0">
+            Already have an account? <a href="login.html">Sign in</a>
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/sample-data.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/validation.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/pages/auth-pages.js"></script>
+</body>
+</html>

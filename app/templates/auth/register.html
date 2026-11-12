@@ -1,0 +1,91 @@
+{% extends "auth/_auth_layout.html" %}
+{% block title %}Register — {{ app_name }}{% endblock %}
+{% block auth_content %}
+  <div class="auth-logo" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6M22 11h-6"></path></svg>
+  </div>
+  <h1>Create your student account</h1>
+  <p class="lead">Use a valid email address — you will log in with it later.</p>
+
+  <form method="post" action="{{ url_for('auth.register') }}" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="grid grid-3">
+      <div class="field {% if errors.first_name %}has-error{% endif %}">
+        <label for="first_name">First name *</label>
+        <input type="text" id="first_name" name="first_name" maxlength="120" required
+               value="{{ form.first_name or '' }}" autocomplete="given-name"
+               placeholder="e.g. Ananya">
+        {% if errors.first_name %}<small class="error">{{ errors.first_name }}</small>{% endif %}
+      </div>
+
+      <div class="field {% if errors.middle_name %}has-error{% endif %}">
+        <label for="middle_name">Middle name <small class="hint">(optional)</small></label>
+        <input type="text" id="middle_name" name="middle_name" maxlength="120"
+               value="{{ form.middle_name or '' }}" autocomplete="additional-name"
+               placeholder="e.g. Priya">
+        {% if errors.middle_name %}<small class="error">{{ errors.middle_name }}</small>{% endif %}
+      </div>
+
+      <div class="field {% if errors.last_name %}has-error{% endif %}">
+        <label for="last_name">Last name <small class="hint">(optional)</small></label>
+        <input type="text" id="last_name" name="last_name" maxlength="120"
+               value="{{ form.last_name or '' }}" autocomplete="family-name"
+               placeholder="e.g. Sharma">
+        {% if errors.last_name %}<small class="error">{{ errors.last_name }}</small>{% endif %}
+      </div>
+    </div>
+    <small class="hint">Only your first name is required — middle and last names may be left blank.</small>
+
+    <div class="field {% if errors.email %}has-error{% endif %}">
+      <label for="email">Email address</label>
+      <input type="email" id="email" name="email" maxlength="254"
+             value="{{ form.email or '' }}" required autocomplete="email"
+             placeholder="you@example.com">
+      {% if errors.email %}<small class="error">{{ errors.email }}</small>{% endif %}
+    </div>
+
+    <div class="field {% if errors.phone %}has-error{% endif %}">
+      <label for="phone">Phone (optional)</label>
+      <input type="tel" id="phone" name="phone" maxlength="20"
+             value="{{ form.phone or '' }}" autocomplete="tel"
+             placeholder="e.g. 98765 43210">
+      {% if errors.phone %}<small class="error">{{ errors.phone }}</small>{% endif %}
+    </div>
+
+    <div class="field {% if errors.password %}has-error{% endif %}">
+      <label for="password">Password</label>
+      <div class="password-wrap">
+        <input type="password" id="password" name="password" minlength="8" required
+               autocomplete="new-password" placeholder="At least 8 characters">
+        <button type="button" class="pw-toggle" data-pw-toggle="password"
+                aria-label="Show or hide password" aria-pressed="false">
+          <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><path d="M1 1l22 22"></path></svg>
+        </button>
+      </div>
+      <small class="hint">At least 8 characters with a letter and a number.</small>
+      {% if errors.password %}<small class="error">{{ errors.password }}</small>{% endif %}
+    </div>
+
+    <div class="field {% if errors.confirm_password %}has-error{% endif %}">
+      <label for="confirm_password">Confirm password</label>
+      <div class="password-wrap">
+        <input type="password" id="confirm_password" name="confirm_password" minlength="8" required
+               autocomplete="new-password" placeholder="Repeat your password">
+        <button type="button" class="pw-toggle" data-pw-toggle="confirm_password"
+                aria-label="Show or hide password" aria-pressed="false">
+          <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><path d="M1 1l22 22"></path></svg>
+        </button>
+      </div>
+      {% if errors.confirm_password %}<small class="error">{{ errors.confirm_password }}</small>{% endif %}
+    </div>
+
+    <button class="btn btn-block" type="submit" data-loading="Creating account…">Create account</button>
+  </form>
+
+  <p class="auth-alt">
+    Already registered? <a href="{{ url_for('auth.login') }}">Login</a>
+  </p>
+{% endblock %}

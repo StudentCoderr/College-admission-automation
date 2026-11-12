@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="Education themed line pattern">
+  <g fill="none" stroke="#dbeafe" stroke-opacity="0.17" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- graduation cap -->
+    <path d="M58 126 112 100l54 26-54 26z"/>
+    <path d="M84 139v28c0 15 56 15 56 0v-28"/>
+    <path d="M166 126v39"/>
+
+    <!-- open book -->
+    <path d="M282 138c18-11 36-11 54 0v49c-18-11-36-11-54 0z"/>
+    <path d="M336 138c18-11 36-11 54 0v49c-18-11-36-11-54 0z"/>
+    <path d="M336 138v49"/>
+
+    <!-- pencil -->
+    <g transform="rotate(-36 123 347)">
+      <rect x="108" y="296" width="30" height="92" rx="6"/>
+      <path d="M108 296l15-23 15 23"/>
+      <path d="M108 388l15 23 15-23"/>
+      <path d="M123 411v17"/>
+    </g>
+
+    <!-- globe -->
+    <circle cx="353" cy="342" r="49"/>
+    <path d="M304 342h98"/>
+    <path d="M353 293c-22 29-22 69 0 98"/>
+    <path d="M353 293c22 29 22 69 0 98"/>
+
+    <!-- connecting lines -->
+    <path d="M193 126c28 0 52 3 76 11" stroke-dasharray="3 8"/>
+    <path d="M187 176c-7 39-19 73-39 105" stroke-dasharray="3 8"/>
+    <path d="M192 342c31 3 64 5 98 5" stroke-dasharray="3 8"/>
+    <path d="M404 222c12 32 12 65 0 98" stroke-dasharray="3 8"/>
+
+    <!-- small accents -->
+    <path d="M218 258h28M232 244v28"/>
+    <path d="M54 238c14 0 28 3 41 9"/>
+    <circle cx="226" cy="408" r="7"/>
+    <circle cx="64" cy="64" r="4"/>
+  </g>
+  <g fill="#dbeafe" fill-opacity="0.16">
+    <circle cx="26" cy="26" r="2"/>
+    <circle cx="454" cy="26" r="2"/>
+    <circle cx="26" cy="454" r="2"/>
+    <circle cx="454" cy="454" r="2"/>
+    <circle cx="250" cy="212" r="2.5"/>
+    <circle cx="452" cy="205" r="2"/>
+    <circle cx="196" cy="455" r="2"/>
+  </g>
+</svg>

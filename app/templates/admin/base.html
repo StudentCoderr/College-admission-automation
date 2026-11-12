@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Admin — {{ app_name }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261109h">
+  {% block head %}{% endblock %}
+</head>
+<body class="admin-body">
+{% set ep = request.endpoint or '' %}
+<div class="admin-shell">
+
+  <aside class="admin-sidebar" id="admin-sidebar" aria-label="Administration navigation">
+    <div class="admin-brand">
+      <span class="admin-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"></path></svg>
+      </span>
+      <span class="admin-brand-text">
+        <strong>Admission Console</strong>
+        <small>Administration</small>
+      </span>
+    </div>
+
+    <nav class="admin-nav">
+      <p class="admin-nav-section">Overview</p>
+      <a class="{{ 'active' if ep == 'admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg></span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <p class="admin-nav-section">Management</p>
+      <a class="{{ 'active' if ep in ['admin.students', 'admin.student_detail', 'admin.student_new', 'admin.student_edit'] }}" href="{{ url_for('admin.students') }}">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+        <span class="nav-label">Students</span>
+      </a>
+      <a class="{{ 'active' if ep in ['admin.applications', 'admin.application_detail'] }}" href="{{ url_for('admin.applications') }}">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path></svg></span>
+        <span class="nav-label">Admission Applications</span>
+      </a>
+      <a class="{{ 'active' if ep == 'admin.courses' }}" href="{{ url_for('admin.courses') }}">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"></path></svg></span>
+        <span class="nav-label">Polytechnic Courses</span>
+      </a>
+
+      <p class="admin-nav-section">Insights</p>
+      <a class="{{ 'active' if ep == 'admin.notifications' }}" href="{{ url_for('admin.notifications') }}">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
+        <span class="nav-label">Notifications</span>
+      </a>
+      <a class="{{ 'active' if ep == 'admin.reports' }}" href="{{ url_for('admin.reports') }}">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg></span>
+        <span class="nav-label">Reports &amp; Analytics</span>
+      </a>
+
+      <p class="admin-nav-section">Account</p>
+      <a class="{{ 'active' if ep == 'admin.profile' }}" href="{{ url_for('admin.profile') }}">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+        <span class="nav-label">Admin Profile</span>
+      </a>
+    </nav>
+
+    <div class="admin-side-foot">
+      <a href="{{ url_for('main.index') }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M3 12l9-9 9 9M5 10v10h14V10"></path></svg>
+        View public site
+      </a>
+    </div>
+  </aside>
+
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="admin-menu-toggle" id="admin-menu-toggle" type="button" aria-label="Toggle navigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+      <div class="admin-page-title">{% block page_title %}Dashboard{% endblock %}</div>
+      <div class="admin-user-area">
+        <div class="admin-who">
+          <div class="admin-avatar">{{ (current_user.full_name or 'A')[0]|upper }}</div>
+          <div>
+            <strong>{{ current_user.full_name }}</strong>
+            <small>Administrator</small>
+          </div>
+        </div>
+        <form method="post" action="{{ url_for('auth.logout') }}" class="inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-outline" type="submit">Logout</button>
+        </form>
+      </div>
+    </header>
+
+    <main class="admin-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flashes" role="status">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="admin-footer">
+      &copy; {{ current_year }} {{ app_name }} — Administrator area
+    </footer>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/admin.js') }}?v=20261108b"></script>
+<script src="{{ url_for('static', filename='js/ui.js') }}?v=20261109"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

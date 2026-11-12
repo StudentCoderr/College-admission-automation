@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Line illustration of a college campus">
+  <g fill="none" stroke="#1d4ed8" stroke-opacity="0.22" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- sun and arcs -->
+    <circle cx="756" cy="112" r="52"/>
+    <path d="M700 112h112M756 56v112"/>
+    <path d="M724 80l64 64M788 80l-64 64" stroke-opacity="0.1"/>
+    <path d="M620 160c44-32 92-32 136 0" stroke-dasharray="4 9"/>
+
+    <!-- main campus building -->
+    <path d="M300 262h364v268H300z"/>
+    <path d="M368 218h228v44H368z"/>
+    <path d="M452 170h60v48h-60z"/>
+    <path d="M482 132v38"/>
+    <circle cx="482" cy="122" r="10"/>
+    <path d="M386 280h58v70h-58zM456 280h58v70h-58zM526 280h58v70h-58zM596 280h50v70h-50z"/>
+    <path d="M386 370h58v70h-58zM456 370h58v70h-58zM526 370h58v70h-58zM596 370h50v70h-50z"/>
+    <path d="M444 460h76v70h-76z"/>
+    <path d="M430 530h104M416 546h132M402 562h160"/>
+
+    <!-- side buildings -->
+    <path d="M182 368h118v162H182z"/>
+    <path d="M194 386h36v36h-36zM252 386h36v36h-36zM194 438h36v36h-36zM252 438h36v36h-36z"/>
+    <path d="M664 342h86v188h-86z" stroke-opacity="0.16"/>
+    <path d="M676 360h26v26h-26zM716 360h22v26h-22zM676 402h26v26h-26zM716 402h22v26h-22z" stroke-opacity="0.14"/>
+
+    <!-- trees -->
+    <path d="M148 470v60M124 440c0-20 11-36 24-36s24 16 24 36c15 0 26 13 26 28s-12 27-27 27h-46c-15 0-27-12-27-27s11-28 26-28z"/>
+    <path d="M760 478v52M738 452c0-16 10-29 22-29s22 13 22 29c12 0 22 11 22 23s-10 22-22 22h-44c-12 0-22-10-22-22s10-23 22-23z" stroke-opacity="0.16"/>
+
+    <!-- ground and path -->
+    <path d="M50 530h800"/>
+    <path d="M560 530c42 26 100 26 152 0" stroke-dasharray="5 10"/>
+    <path d="M70 560c164-16 300-16 420 0s220 16 340 0" stroke-opacity="0.12"/>
+    <path d="M100 586c170-12 300-12 410 0s210 10 300 0" stroke-opacity="0.08"/>
+
+    <!-- small details -->
+    <path d="M64 190c16 0 30 4 44 11M78 172c11 0 22 3 33 8" stroke-opacity="0.12"/>
+    <circle cx="92" cy="238" r="4" fill="#1d4ed8" fill-opacity="0.18" stroke="none"/>
+    <circle cx="840" cy="250" r="3" fill="#1d4ed8" fill-opacity="0.15" stroke="none"/>
+    <path d="M310 238v-28M352 238v-28" stroke-opacity="0.18"/>
+  </g>
+</svg>

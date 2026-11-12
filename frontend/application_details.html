@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Application Details — Evergreen Institute of Technology</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body data-page="admin_dashboard" data-guard="admin">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="breadcrumb"><a href="admin_dashboard.html">Dashboard</a> <span>/ Application</span></div>
+        <div class="flex-between flex-wrap">
+          <div>
+            <h1>Application <span id="appTitle">—</span></h1>
+            <p>Review the applicant's details and documents, then record your decision.</p>
+          </div>
+          <div id="appStatusPill"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div id="detailsHost"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Details markup is injected only after the application loads. -->
+  <template id="detailsTemplate">
+    <div id="adminNoteBox" class="alert alert-warning" hidden></div>
+
+    <div class="grid grid-2">
+      <section class="card">
+        <div class="card-title"><h2 class="mb-0">Personal &amp; contact</h2></div>
+        <div id="personalHost"></div>
+      </section>
+      <section class="card">
+        <div class="card-title"><h2 class="mb-0">Academic &amp; course</h2></div>
+        <div id="academicHost"></div>
+      </section>
+    </div>
+
+    <section class="card mt-2">
+      <div class="card-title"><h2 class="mb-0">Documents</h2></div>
+      <div id="documentsHost"></div>
+    </section>
+
+    <section class="card mt-2" id="reviewActions">
+      <div class="card-title"><h2 class="mb-0">Review decision</h2></div>
+      <p class="muted small">Choose an action. Rejecting or requesting a correction requires a note for the applicant.</p>
+      <div class="flex flex-wrap gap-sm">
+        <button class="btn btn-outline" type="button" data-decision="under_review">Mark under review</button>
+        <button class="btn btn-success" type="button" data-decision="approved">Approve</button>
+        <button class="btn btn-outline" type="button" data-decision="correction_requested">Request correction</button>
+        <button class="btn btn-danger" type="button" data-decision="rejected">Reject</button>
+      </div>
+    </section>
+
+    <section class="card mt-2">
+      <div class="card-title"><h2 class="mb-0">Application history</h2></div>
+      <div id="historyHost"></div>
+    </section>
+
+    <div class="mt-2">
+      <a class="btn btn-ghost" href="admin_dashboard.html">← Back to dashboard</a>
+    </div>
+  </template>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/sample-data.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/validation.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/pages/application-details.js"></script>
+</body>
+</html>

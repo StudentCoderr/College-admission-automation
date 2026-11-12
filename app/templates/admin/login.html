@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Administrator Login — {{ app_name }}{% endblock %}
+{% block content %}
+<section class="card auth-card admin-auth-card">
+  <div class="auth-logo" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+  </div>
+  <span class="auth-badge" style="display:inline-flex;">&#128274; Restricted area</span>
+  <h1>Administrator sign in</h1>
+  <p class="lead">
+    This area is restricted to authorised college administrators. Students
+    should use the <a href="{{ url_for('auth.login') }}">student login</a>.
+  </p>
+
+  <form method="post" action="{{ url_for('admin.admin_login') }}" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+
+    <div class="field">
+      <label for="email">Administrator email</label>
+      <input type="email" id="email" name="email" value="{{ email or '' }}"
+             required autocomplete="email" placeholder="admin@college.edu" autofocus>
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="password-wrap">
+        <input type="password" id="password" name="password" required
+               autocomplete="current-password" placeholder="Enter your password">
+        <button type="button" class="pw-toggle" data-pw-toggle="password"
+                aria-label="Show or hide password" aria-pressed="false">
+          <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><path d="M1 1l22 22"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn btn-block" type="submit" data-loading="Signing in…">Sign in as administrator</button>
+  </form>
+
+  <p class="auth-alt small-note">
+    The first administrator account is created securely with
+    <code>flask create-admin</code>. Passwords are never hard-coded.
+  </p>
+  <p class="auth-alt small-note">
+    <a href="{{ url_for('auth.login') }}">Student login</a> ·
+    <a href="{{ url_for('main.index') }}">Back to home</a>
+  </p>
+</section>
+{% endblock %}

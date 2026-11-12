@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}My Profile — {{ app_name }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Account</span>
+    <h1>My profile</h1>
+    <p class="muted">Keep your name and contact details up to date — they are reused on your admission applications.</p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn-outline" href="{{ url_for('student.dashboard') }}">&larr; Back to dashboard</a>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.8rem;">
+      <span class="profile-avatar">{{ (current_user.full_name or 'S')[0]|upper }}</span>
+      <div>
+        <h2 style="margin:0 0 .1rem;">{{ current_user.full_name }}</h2>
+        <p class="muted" style="margin:0;">{{ current_user.email }}</p>
+      </div>
+    </div>
+    <h3>Account details</h3>
+    <dl class="details">
+      <dt>Email address</dt><dd>{{ current_user.email or "—" }}</dd>
+      <dt>Registration no.</dt><dd>{{ current_user.registration_number or "—" }}</dd>
+      <dt>Account status</dt>
+      <dd>
+        {% set state = current_user.status or 'active' %}
+        {% if state == 'active' %}<span class="pill status-approved">Active</span>
+        {% elif state == 'withdrawn' %}<span class="pill status-withdrawn">Withdrawn</span>
+        {% else %}<span class="pill status-inactive">Inactive</span>{% endif %}
+      </dd>
+    </dl>
+    <p class="muted small-note">
+      Your email address is your login identity and cannot be changed here.
+      Contact the admissions office if you lose access.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Edit contact details</h2>
+    <form method="post" action="{{ url_for('student.profile') }}" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="grid grid-3">
+        <div class="field {% if errors.first_name %}has-error{% endif %}">
+          <label for="first_name">First name *</label>
+          <input type="text" id="first_name" name="first_name" maxlength="120" required
+                 value="{{ form.first_name or '' }}" autocomplete="given-name"
+                 placeholder="e.g. Ananya">
+          {% if errors.first_name %}<small class="error">{{ errors.first_name }}</small>{% endif %}
+        </div>
+
+        <div class="field {% if errors.middle_name %}has-error{% endif %}">
+          <label for="middle_name">Middle name <small class="hint">(optional)</small></label>
+          <input type="text" id="middle_name" name="middle_name" maxlength="120"
+                 value="{{ form.middle_name or '' }}" autocomplete="additional-name"
+                 placeholder="e.g. Priya">
+          {% if errors.middle_name %}<small class="error">{{ errors.middle_name }}</small>{% endif %}
+        </div>
+
+        <div class="field {% if errors.last_name %}has-error{% endif %}">
+          <label for="last_name">Last name <small class="hint">(optional)</small></label>
+          <input type="text" id="last_name" name="last_name" maxlength="120"
+                 value="{{ form.last_name or '' }}" autocomplete="family-name"
+                 placeholder="e.g. Sharma">
+          {% if errors.last_name %}<small class="error">{{ errors.last_name }}</small>{% endif %}
+        </div>
+      </div>
+
+      <div class="field {% if errors.email %}has-error{% endif %}">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" maxlength="254" readonly disabled
+               value="{{ form.email or '' }}" class="readonly-input">
+        {% if errors.email %}<small class="error">{{ errors.email }}</small>{% endif %}
+        <small class="hint">Read-only — the email is your sign-in address.</small>
+      </div>
+
+      <div class="field {% if errors.phone %}has-error{% endif %}">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="phone" maxlength="20"
+               value="{{ form.phone or '' }}" autocomplete="tel"
+               placeholder="e.g. 98765 43210">
+        {% if errors.phone %}<small class="error">{{ errors.phone }}</small>{% endif %}
+      </div>
+
+      <button class="btn" type="submit" data-loading="Saving…">Save changes</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

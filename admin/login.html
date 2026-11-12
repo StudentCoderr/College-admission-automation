@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Sign In &middot; College Admission Automation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body class="login-body">
+  <div class="login-card">
+    <div class="brand">
+      <div class="logo">CA</div>
+      <div>
+        <h1>Admin Console</h1>
+      </div>
+    </div>
+    <p class="tagline">Sign in with an administrator account to review applications and manage courses.</p>
+
+    <div class="login-error" id="login-error"></div>
+
+    <form id="login-form" novalidate>
+      <div class="form-field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" autocomplete="username" required placeholder="admin@college.edu">
+      </div>
+      <div class="form-field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required placeholder="Your password">
+      </div>
+      <button type="submit" class="btn-primary btn-block" id="login-button">Sign in</button>
+    </form>
+
+    <details class="advanced">
+      <summary>Advanced: API server URL (standalone mode)</summary>
+      <input type="text" id="api-base" placeholder="http://localhost:5000"
+             title="Leave blank when the console is served by Flask at /admin-console.">
+    </details>
+  </div>
+
+  <script src="assets/js/config.js?v=20261108b"></script>
+  <script src="assets/js/api.js?v=20261108b"></script>
+  <script src="assets/js/ui.js?v=20261108b"></script>
+  <script src="assets/js/auth.js?v=20261108b"></script>
+  <script>
+    (function () {
+      // Pre-fill the API URL from the query parameter if present.
+      var params = new URLSearchParams(window.location.search);
+      var api = params.get("api");
+      var field = document.getElementById("api-base");
+      if (api && field) field.value = api;
+      window.ADMIN.Auth.initLogin();
+    })();
+  </script>
+</body>
+</html>

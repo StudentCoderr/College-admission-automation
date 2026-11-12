@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+{% block title %}Student added — {{ app_name }}{% endblock %}
+{% block page_title %}Student added{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Success</span>
+    <h1>Student created</h1>
+    <p class="muted">{{ student.full_name }} ({{ student.email }})</p>
+  </div>
+</div>
+
+<section class="card">
+  {% if setup_url %}
+  <h2>One-time password setup link</h2>
+  <p class="muted">
+    Share this link with the student through a trusted channel. It expires in
+    7&nbsp;days, can be used once, and lets the student choose their own
+    password. For security it is shown only now — no password is ever displayed.
+  </p>
+  <div class="copy-box">
+    <input type="text" id="setup-url" value="{{ setup_url }}" readonly onclick="this.select()">
+  </div>
+  <button class="btn btn-outline btn-sm" type="button" id="copy-setup-url" data-copy-target="setup-url">Copy link</button>
+  {% else %}
+  <h2>Account created</h2>
+  <p class="muted">
+    The account is currently not active, so no password setup link was issued.
+    Set the student's status to <strong>Active</strong> and use
+    &ldquo;Resend password setup link&rdquo; when they are ready to sign in.
+  </p>
+  {% endif %}
+
+  <div class="form-actions">
+    <a class="btn" href="{{ url_for('admin.student_detail', user_id=student.id) }}">View student profile</a>
+    <a class="btn btn-outline" href="{{ url_for('admin.students') }}">Back to students</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var btn = document.getElementById("copy-setup-url");
+    var input = document.getElementById("setup-url");
+    if (btn && input) {
+      btn.addEventListener("click", function () {
+        input.select();
+        try { navigator.clipboard.writeText(input.value); } catch (err) {}
+        if (window.showToast) window.showToast("Invitation link copied.", "success");
+      });
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Dashboard — Evergreen Institute of Technology</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body data-page="student_dashboard" data-guard="student">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="dash-head">
+      <div class="container flex-between flex-wrap">
+        <div>
+          <h1>Student dashboard</h1>
+          <p>Track your applications and continue where you left off.</p>
+        </div>
+        <div class="dash-actions">
+          <a class="btn btn-light" href="admission.html">+ New application</a>
+          <a class="btn btn-outline" style="--btn-fg:#fff;--btn-bd:rgba(255,255,255,.5)" href="status.html">Track status</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="card mb-3" id="profileCard"></div>
+
+      <div class="grid grid-4 mb-3" id="statsRow"></div>
+
+      <div class="card">
+        <div class="flex-between flex-wrap mb-2">
+          <h2 class="mb-0">My applications</h2>
+          <a class="btn btn-sm btn-outline" href="courses.html">Browse courses</a>
+        </div>
+        <div id="applicationsHost"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/sample-data.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/validation.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/pages/student-dashboard.js"></script>
+</body>
+</html>

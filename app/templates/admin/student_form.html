@@ -1,0 +1,114 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ 'Add Student' if mode == 'new' else 'Edit Student' }} — {{ app_name }}{% endblock %}
+{% block page_title %}{{ 'Add Student' if mode == 'new' else 'Edit Student' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ 'Add a new student' if mode == 'new' else 'Edit student details' }}</h1>
+    <p class="muted">
+      {% if mode == 'new' %}
+        Create the student record and, optionally, send them a one-time link to
+        set their own password.
+      {% else %}
+        Update {{ student.full_name }}'s details and account status.
+      {% endif %}
+    </p>
+  </div>
+  <a class="btn btn-outline"
+     href="{{ url_for('admin.students') if mode == 'new' else url_for('admin.student_detail', user_id=student.id) }}">
+    Cancel
+  </a>
+</div>
+
+<form class="card form-grid"
+      method="post"
+      action="{{ url_for('admin.student_new') if mode == 'new' else url_for('admin.student_edit', user_id=student.id) }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  {% if errors.get('_form') %}
+  <p class="form-error">{{ errors.get('_form') }}</p>
+  {% endif %}
+
+  <div class="grid grid-3" style="grid-column: 1 / -1;">
+    <div class="field">
+      <label for="first_name">First name *</label>
+      <input type="text" id="first_name" name="first_name" maxlength="120" required
+             value="{{ form.get('first_name', '') }}" placeholder="e.g. Ananya">
+      {% if errors.get('first_name') %}<span class="field-error">{{ errors.get('first_name') }}</span>{% endif %}
+    </div>
+
+    <div class="field">
+      <label for="middle_name">Middle name <small class="hint">(optional)</small></label>
+      <input type="text" id="middle_name" name="middle_name" maxlength="120"
+             value="{{ form.get('middle_name', '') }}" placeholder="e.g. Priya">
+      {% if errors.get('middle_name') %}<span class="field-error">{{ errors.get('middle_name') }}</span>{% endif %}
+    </div>
+
+    <div class="field">
+      <label for="last_name">Last name <small class="hint">(optional)</small></label>
+      <input type="text" id="last_name" name="last_name" maxlength="120"
+             value="{{ form.get('last_name', '') }}" placeholder="e.g. Sharma">
+      {% if errors.get('last_name') %}<span class="field-error">{{ errors.get('last_name') }}</span>{% endif %}
+    </div>
+  </div>
+  {% if mode == 'edit' %}
+  <small class="hint">Current display name: {{ student.full_name }}</small>
+  {% endif %}
+
+  <div class="field">
+    <label for="email">Email *</label>
+    <input type="email" id="email" name="email" maxlength="254" required
+           value="{{ form.get('email', '') }}" placeholder="student@example.com">
+    {% if errors.get('email') %}<span class="field-error">{{ errors.get('email') }}</span>{% endif %}
+  </div>
+
+  <div class="field">
+    <label for="phone">Phone</label>
+    <input type="text" id="phone" name="phone" maxlength="20"
+           value="{{ form.get('phone', '') }}" placeholder="Optional">
+    {% if errors.get('phone') %}<span class="field-error">{{ errors.get('phone') }}</span>{% endif %}
+  </div>
+
+  <div class="field">
+    <label for="registration_number">Registration number</label>
+    <input type="text" id="registration_number" name="registration_number" maxlength="40"
+           value="{{ form.get('registration_number', '') }}"
+           placeholder="Optional college registration reference">
+    {% if errors.get('registration_number') %}<span class="field-error">{{ errors.get('registration_number') }}</span>{% endif %}
+  </div>
+
+  <div class="field">
+    <label for="assigned_course_id">Assigned course</label>
+    <select id="assigned_course_id" name="assigned_course_id">
+      <option value="">— None —</option>
+      {% for course in courses %}
+      <option value="{{ course.id }}"
+        {% if form.get('assigned_course_id')|string == course.id|string %}selected{% endif %}>
+        {{ course.name }} ({{ course.code }}) · {{ course.program_type|title }}
+      </option>
+      {% endfor %}
+    </select>
+    {% if errors.get('assigned_course_id') %}<span class="field-error">{{ errors.get('assigned_course_id') }}</span>{% endif %}
+  </div>
+
+  <div class="field">
+    <label for="status">Account status</label>
+    {% set current_status = form.get('status') or ('active' if mode == 'new' else (student.status if student else 'active')) %}
+    <select id="status" name="status">
+      {% for option in student_statuses %}
+      <option value="{{ option }}" {% if current_status == option %}selected{% endif %}>
+        {{ student_status_labels.get(option, option|title) }}
+      </option>
+      {% endfor %}
+    </select>
+    <small class="hint">Inactive and withdrawn accounts cannot sign in or start new applications.</small>
+    {% if errors.get('status') %}<span class="field-error">{{ errors.get('status') }}</span>{% endif %}
+  </div>
+
+  <div class="form-actions">
+    <button class="btn" type="submit" data-loading="{{ 'Adding student…' if mode == 'new' else 'Saving changes…' }}">
+      {{ 'Add Student' if mode == 'new' else 'Save changes' }}
+    </button>
+  </div>
+</form>
+{% endblock %}

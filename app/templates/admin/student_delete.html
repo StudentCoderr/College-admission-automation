@@ -1,0 +1,51 @@
+{% extends "admin/base.html" %}
+{% block title %}Delete {{ student.full_name }} — {{ app_name }}{% endblock %}
+{% block page_title %}Delete student{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Permanently delete {{ student.full_name }}?</h1>
+    <p class="muted">{{ student.email }}</p>
+  </div>
+  <a class="btn btn-outline" href="{{ url_for('admin.student_detail', user_id=student.id) }}">
+    Cancel
+  </a>
+</div>
+
+<section class="card danger-zone">
+  <h2>This cannot be undone</h2>
+  <p>
+    Permanently deleting this student will also remove all of their associated
+    admission records:
+  </p>
+  <ul>
+    <li><strong>{{ applications|length }}</strong> admission application(s) and their review history</li>
+    <li><strong>{{ document_count }}</strong> uploaded document(s) and their stored files</li>
+    <li>the account itself and its login access</li>
+  </ul>
+  <p class="muted">
+    If the student simply no longer wishes to continue, prefer
+    <strong>Inactive</strong> or <strong>Withdrawn</strong> from the profile
+    page — that disables login while preserving their history.
+  </p>
+
+  <form method="post"
+        action="{{ url_for('admin.student_delete', user_id=student.id) }}"
+        class="stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field">
+      <label for="reason">Reason for permanent deletion *</label>
+      <input type="text" id="reason" name="reason" maxlength="300" required
+             placeholder="e.g. duplicate record; retention period elapsed">
+    </div>
+    <div class="field">
+      <label for="confirm">
+        Type <strong>DELETE</strong> to confirm (second confirmation) *
+      </label>
+      <input type="text" id="confirm" name="confirm" autocomplete="off"
+             pattern="DELETE" title="Type DELETE exactly" required>
+    </div>
+    <button class="btn btn-danger" type="submit" data-loading="Deleting…">Permanently delete student</button>
+  </form>
+</section>
+{% endblock %}

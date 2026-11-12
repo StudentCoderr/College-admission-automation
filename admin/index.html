@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard &middot; College Admission Automation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+
+  <!-- Initial loading screen -->
+  <div id="screen-loading" class="screen">
+    <div>
+      <div class="spinner"></div>
+      <p class="mt">Checking your session&hellip;</p>
+    </div>
+  </div>
+
+  <!-- Forbidden (logged in but not an administrator) -->
+  <div id="forbidden-screen" class="screen hidden">
+    <div>
+      <div class="icon">&#128274;</div>
+      <h2>Access denied</h2>
+      <p>Only administrator accounts can open this dashboard. You have been
+        signed in, but your account does not have the administrator role.</p>
+      <button class="btn-primary" id="forbidden-logout">Sign out</button>
+    </div>
+  </div>
+
+  <!-- Main application -->
+  <div id="app" class="app-shell hidden">
+
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">CA</div>
+        <div class="brand-text">
+          <strong>Admission Console</strong>
+          <span>Administration</span>
+        </div>
+      </div>
+      <nav>
+        <a href="#" class="active" data-tab="panel-overview">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" data-tab="panel-students">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span>Students</span>
+        </a>
+        <a href="#" data-tab="panel-applications">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"></path></svg>
+          <span>Applications</span>
+        </a>
+        <a href="#" data-tab="panel-courses">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"></path></svg>
+          <span>Courses</span>
+        </a>
+        <a href="#" data-tab="panel-reports">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"></path></svg>
+          <span>Reports</span>
+        </a>
+        <a href="#" data-tab="panel-profile">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          <span>Profile</span>
+        </a>
+      </nav>
+      <div class="side-foot">College Admission Automation System</div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="page-title" id="page-title">Dashboard</div>
+        <div class="user-area">
+          <div id="topbar-who"></div>
+          <button class="btn-ghost" id="logout-button">Sign out</button>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- ======================== Dashboard tab ========================= -->
+        <section id="panel-overview" class="tab-panel active">
+          <div id="overview-cards" class="stats-grid"></div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Recent administrator activity</h3></div>
+              <div class="card-body" id="overview-recent"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Quick actions</h3></div>
+              <div class="card-body">
+                <p class="muted small">Jump straight to a task. Every figure on this
+                  dashboard is loaded live from Supabase.</p>
+                <div class="quick-actions">
+                  <button class="btn-secondary" data-goto="panel-students">View students</button>
+                  <button class="btn-secondary" data-goto="panel-applications">Review applications</button>
+                  <button class="btn-secondary" data-goto="panel-courses">Manage courses</button>
+                  <button class="btn-secondary" data-goto="panel-reports">Open reports</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================= Applications tab ======================= -->
+        <section id="panel-applications" class="tab-panel">
+
+          <div id="stats-grid" class="stats-grid"></div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>Filter applications</h3>
+              <button class="btn-ghost btn-sm" id="filter-reset">Reset filters</button>
+            </div>
+            <div class="card-body">
+              <div class="filters">
+                <div class="field grow">
+                  <label for="filter-search">Search</label>
+                  <input type="search" id="filter-search" placeholder="Name, application number or email&hellip;">
+                </div>
+                <div class="field">
+                  <label for="filter-course">Course</label>
+                  <select id="filter-course"></select>
+                </div>
+                <div class="field">
+                  <label for="filter-status">Status</label>
+                  <select id="filter-status">
+                    <option value="">All statuses</option>
+                    <option value="draft">Draft</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="under_review">Under Review</option>
+                    <option value="correction_requested">Correction Requested</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="filter-from">From date</label>
+                  <input type="date" id="filter-from">
+                </div>
+                <div class="field">
+                  <label for="filter-to">To date</label>
+                  <input type="date" id="filter-to">
+                </div>
+                <div class="field">
+                  <label for="filter-per-page">Per page</label>
+                  <select id="filter-per-page">
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="5">5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>Admission applications</h3>
+              <a id="export-link" class="btn-secondary btn-sm" href="#" download>Export CSV</a>
+            </div>
+            <div id="table-status" class="hidden"></div>
+            <div id="table-wrap" class="table-wrap">
+              <table class="data-table" id="applications-table">
+                <thead></thead>
+                <tbody id="applications-body"></tbody>
+              </table>
+            </div>
+            <div class="pagination">
+              <div class="meta" id="page-meta"></div>
+              <div class="controls" id="page-controls"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================= Courses tab ========================== -->
+        <section id="panel-courses" class="tab-panel">
+          <div class="card">
+            <div class="card-head">
+              <h3>Course management</h3>
+              <button class="btn-primary" id="add-course-button">+ Add course</button>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="courses-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Fee / yr</th>
+                    <th>Duration</th>
+                    <th>Seats</th>
+                    <th>Applications</th>
+                    <th>Status</th>
+                    <th class="actions-cell">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="courses-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================= Students tab ========================= -->
+        <section id="panel-students" class="tab-panel">
+          <div class="card">
+            <div class="card-head">
+              <h3>Filter students</h3>
+              <button class="btn-ghost btn-sm" id="students-reset">Reset filters</button>
+            </div>
+            <div class="card-body">
+              <div class="filters">
+                <div class="field grow">
+                  <label for="student-search">Search</label>
+                  <input type="search" id="student-search"
+                         placeholder="Name, email, phone or registration number&hellip;">
+                </div>
+                <div class="field">
+                  <label for="student-status">Account status</label>
+                  <select id="student-status">
+                    <option value="">All</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="withdrawn">Withdrawn</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="student-sort">Sort by</label>
+                  <select id="student-sort">
+                    <option value="created_at">Registration date</option>
+                    <option value="name">Name</option>
+                    <option value="email">Email</option>
+                    <option value="status">Status</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="student-order">Order</label>
+                  <select id="student-order">
+                    <option value="desc">Descending</option>
+                    <option value="asc">Ascending</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="student-per-page">Per page</label>
+                  <select id="student-per-page">
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <h3>Registered students</h3>
+              <button class="btn-primary" id="add-student-button">+ Add student</button>
+            </div>
+            <div id="students-status" class="hidden"></div>
+            <div id="students-wrap" class="table-wrap">
+              <table class="data-table" id="students-table">
+                <thead></thead>
+                <tbody id="students-body"></tbody>
+              </table>
+            </div>
+            <div class="pagination">
+              <div class="meta" id="students-meta"></div>
+              <div class="controls" id="students-controls"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================== Reports tab ========================= -->
+        <section id="panel-reports" class="tab-panel">
+          <div id="report-cards" class="stats-grid"></div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Applications by status</h3></div>
+              <div class="card-body" id="report-status-bars"></div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Applications by course</h3></div>
+              <div class="card-body" id="report-course-bars"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Recent administrator activity</h3></div>
+            <div class="table-wrap">
+              <table class="data-table" id="report-audit-table">
+                <thead>
+                  <tr><th>When</th><th>Administrator</th><th>Action</th><th>Details</th></tr>
+                </thead>
+                <tbody id="report-audit-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================== Profile tab ========================= -->
+        <section id="panel-profile" class="tab-panel">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-head"><h3>Account details</h3></div>
+              <div class="card-body">
+                <dl class="kv" id="profile-details"></dl>
+                <p class="muted small mt">Password hashes and secret credentials are
+                  never displayed here.</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head"><h3>Change password</h3></div>
+              <div class="card-body">
+                <form id="password-form" novalidate>
+                  <div class="form-field" id="pf-current">
+                    <label for="current_password">Current password</label>
+                    <input type="password" id="current_password" autocomplete="current-password">
+                    <div class="field-error hidden"></div>
+                  </div>
+                  <div class="form-field" id="pf-new">
+                    <label for="new_password">New password</label>
+                    <input type="password" id="new_password" minlength="8" autocomplete="new-password">
+                    <div class="field-error hidden"></div>
+                  </div>
+                  <div class="form-field" id="pf-confirm">
+                    <label for="confirm_password">Confirm new password</label>
+                    <input type="password" id="confirm_password" minlength="8" autocomplete="new-password">
+                    <div class="field-error hidden"></div>
+                  </div>
+                  <button class="btn-primary" type="submit" id="password-submit">Update password</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>My recent activity</h3></div>
+            <div class="card-body" id="profile-activity"></div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Detail drawer -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <aside class="drawer" id="drawer" aria-label="Application details">
+    <div class="drawer-head">
+      <div>
+        <h3 id="drawer-title">Application</h3>
+        <div class="sub" id="drawer-sub"></div>
+      </div>
+      <button class="close" id="drawer-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+
+  <script src="assets/js/config.js?v=20261109"></script>
+  <script src="assets/js/api.js?v=20261109"></script>
+  <script src="assets/js/ui.js?v=20261109"></script>
+  <script src="assets/js/auth.js?v=20261109"></script>
+  <script src="assets/js/dashboard.js?v=20261109"></script>
+  <script src="assets/js/detail.js?v=20261109"></script>
+  <script src="assets/js/courses.js?v=20261109"></script>
+  <script src="assets/js/overview.js?v=20261109"></script>
+  <script src="assets/js/students.js?v=20261109"></script>
+  <script src="assets/js/reports.js?v=20261109"></script>
+  <script src="assets/js/profile.js?v=20261109"></script>
+  <script src="assets/js/app.js?v=20261109"></script>
+</body>
+</html>

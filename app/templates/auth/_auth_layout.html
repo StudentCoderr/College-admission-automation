@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-page">
+  <aside class="auth-panel">
+    <span class="eyebrow auth-eyebrow">Student admission portal</span>
+    <h2>Your admission journey, all in one place.</h2>
+    <p>
+      Register, choose your preferred programme, upload your documents and
+      follow every review update online — securely and without paperwork.
+    </p>
+    <ul class="auth-points">
+      <li>
+        <span class="auth-point-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+        </span>
+        Guided online application
+      </li>
+      <li>
+        <span class="auth-point-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+        </span>
+        Secure document upload
+      </li>
+      <li>
+        <span class="auth-point-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+        </span>
+        Live application status tracking
+      </li>
+    </ul>
+    <div class="auth-panel-note">
+      <strong>Need help?</strong>
+      <span>Contact the admissions office at <a href="mailto:admissions@college.edu">admissions@college.edu</a>.</span>
+    </div>
+  </aside>
+
+  <div class="card auth-card">
+    {% block auth_content %}{% endblock %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}My Applications — {{ app_name }}{% endblock %}
+{% block content %}
+{% set state = current_user.status or 'active' %}
+<div class="dash-hero">
+  <div>
+    <h1>Welcome, {{ current_user.full_name }} 👋</h1>
+    <p>
+      {% if applications %}
+        Track your applications below — every status change is recorded and visible to you.
+      {% else %}
+        Your admission journey starts with your first application.
+      {% endif %}
+    </p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn-outline" href="{{ url_for('student.apply') }}" style="background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);color:#fff;">+ New application</a>
+  </div>
+</div>
+
+<div class="grid grid-4 stats">
+  <div class="stat"><span class="stat-value">{{ applications|length }}</span><span class="stat-label">Total</span></div>
+  <div class="stat stat-warning"><span class="stat-value">{{ counts.get('submitted', 0) + counts.get('under_review', 0) + counts.get('correction_requested', 0) }}</span><span class="stat-label">In review</span></div>
+  <div class="stat stat-success"><span class="stat-value">{{ counts.get('approved', 0) }}</span><span class="stat-label">Approved</span></div>
+  <div class="stat stat-danger"><span class="stat-value">{{ counts.get('rejected', 0) }}</span><span class="stat-label">Rejected</span></div>
+</div>
+
+{% for notice in notices %}
+  <div class="notice notice-{{ notice.kind }}">
+    <span class="nt-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4m0 4h.01"></path></svg>
+    </span>
+    <p>{{ notice.text }}</p>
+  </div>
+{% endfor %}
+
+<div class="grid grid-2">
+  <!-- Profile summary -->
+  <section class="card">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.6rem;">
+      <span class="profile-avatar">{{ (current_user.full_name or 'S')[0]|upper }}</span>
+      <div>
+        <h2 style="margin:0 0 .1rem;">{{ current_user.full_name }}</h2>
+        <p class="muted" style="margin:0;">{{ current_user.email }}</p>
+      </div>
+    </div>
+    <dl class="details">
+      <dt>Email address</dt><dd>{{ current_user.email or "—" }}</dd>
+      <dt>Phone</dt><dd>{{ current_user.phone or "—" }}</dd>
+      <dt>Registration no.</dt><dd>{{ current_user.registration_number or "—" }}</dd>
+      <dt>Account status</dt>
+      <dd>
+        {% if state == 'active' %}<span class="pill status-approved">Active</span>
+        {% elif state == 'withdrawn' %}<span class="pill status-withdrawn">Withdrawn</span>
+        {% else %}<span class="pill status-inactive">Inactive</span>{% endif %}
+      </dd>
+    </dl>
+    <hr class="divider">
+    <h3>Selected course</h3>
+    {% if selected_course %}
+      <p>
+        <strong>{{ selected_course.name }}</strong>
+        <span class="badge">{{ selected_course.code }}</span>
+        <span class="pill {{ 'pill-diploma' if selected_course.program_type == 'diploma' else 'pill-degree' }}">
+          {{ (selected_course.program_type or 'degree')|title }}
+        </span>
+      </p>
+      <p class="muted small-note">
+        Duration {{ selected_course.duration_years }} year(s) ·
+        {% if selected_course.tuition_fee %}₹{{ "{:,.2f}".format(selected_course.tuition_fee) }}/year{% else %}Fee: contact office{% endif %}
+      </p>
+      <a class="btn btn-sm btn-outline" href="{{ url_for('main.course_detail', course_id=selected_course.id) }}">Course details</a>
+    {% else %}
+      <p class="muted">No course selected yet. Start an application to choose a branch.</p>
+      <a class="btn btn-sm" href="{{ url_for('student.apply') }}">Choose a course</a>
+    {% endif %}
+  </section>
+
+  <!-- Application status overview -->
+  <section class="card">
+    <h2>Application status overview</h2>
+    {% if latest %}
+      {% set status = latest.status %}
+      <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.4rem;">
+        <strong>{% if latest.application_number %}Application {{ latest.application_number }}{% else %}Draft application{% endif %}</strong>
+        <span class="pill status-{{ status }}">{{ status_labels.get(status, status) }}</span>
+      </div>
+      {% if status == 'rejected' %}
+        <div class="notice notice-danger">
+          <span class="nt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M15 9l-6 6M9 9l6 6"></path></svg></span>
+          <p>
+            This application was rejected{% if latest.admin_note %}: {{ latest.admin_note }}{% endif %}.
+            Contact the admissions office if you believe this is in error.
+          </p>
+        </div>
+      {% else %}
+        {% set idx = {'draft':0,'submitted':1,'under_review':2,'correction_requested':2,'approved':3,'rejected':-1}.get(status, 0) %}
+        <div class="progress-track" aria-label="Admission progress">
+          {% set steps = [
+            {'key':'draft','label':'Started'},
+            {'key':'submitted','label':'Submitted'},
+            {'key':'under_review','label':'Under review'},
+            {'key':'approved','label':'Approved'}
+          ] %}
+          {% for step in steps %}
+            <div class="progress-step {% if loop.index0 < idx %}done{% elif loop.index0 == idx %}{{ 'done' if status == 'approved' else 'current' }}{% endif %}">
+              <span class="p-dot">
+                {% if loop.index0 < idx or status == 'approved' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+                {% else %}{{ loop.index }}{% endif %}
+              </span>
+              <span class="p-label">{{ step.label }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if status == 'correction_requested' and latest.admin_note %}
+        <div class="notice notice-warning">
+          <span class="nt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01"></path><circle cx="12" cy="12" r="10"></circle></svg></span>
+          <p>Action needed: <strong>{{ latest.admin_note }}</strong></p>
+        </div>
+      {% endif %}
+      <div class="form-actions">
+        <a class="btn btn-sm btn-outline" href="{{ url_for('student.application_detail', application_id=latest.id) }}">Open application</a>
+        {% if latest.status in ['draft', 'correction_requested'] %}
+          <a class="btn btn-sm" href="{{ url_for('student.edit_application', application_id=latest.id) }}">Edit details</a>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <span class="es-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg></span>
+        <h3>No applications yet</h3>
+        <p>Start your first admission application — it takes only a few minutes.</p>
+        <a class="btn" href="{{ url_for('student.apply') }}">Start your first application</a>
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Document checklist -->
+  <section class="card">
+    <h2>Document checklist</h2>
+    <p class="muted small-note">
+      {% if latest %}
+        Required documents for your {% if latest.application_number %}latest application{% else %}draft{% endif %}.
+      {% else %}Required documents once you start an application.{% endif %}
+    </p>
+    {% set uploaded = (latest.get('documents') or []) if latest else [] %}
+    <ul class="doc-check">
+      {% for key, label in document_types.items() %}
+        {% set present = uploaded|selectattr('doc_type', 'equalto', key)|list %}
+        {% set verified = present|selectattr('is_verified', 'equalto', true)|list %}
+        <li class="{% if present %}done{% else %}pending{% endif %}">
+          <span class="dc-ico">
+            {% if present %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+            {% else %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><path d="M13 2v7h7"></path></svg>
+            {% endif %}
+          </span>
+          <span>
+            {{ label }}
+            {% if present %}
+              <small class="muted"> — {% if verified %}<span class="pill status-approved">Verified</span>{% else %}<span class="pill">Pending verification</span>{% endif %}</small>
+            {% endif %}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+    {% if latest and latest.status in ['draft', 'correction_requested'] %}
+      <a class="btn btn-sm btn-outline" href="{{ url_for('student.application_detail', application_id=latest.id) }}#documents">Manage documents</a>
+    {% endif %}
+  </section>
+
+  <!-- Quick actions -->
+  <section class="card">
+    <h2>Quick actions</h2>
+    <div class="quick-grid">
+      <a class="quick-act" href="{{ url_for('student.apply') }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+        Apply for Admission
+      </a>
+      <a class="quick-act" href="{{ url_for('student.dashboard') }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+        My Applications
+      </a>
+      <a class="quick-act" href="{{ url_for('main.courses') }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"></path></svg>
+        View Courses
+      </a>
+      <a class="quick-act" href="{{ url_for('student.profile') }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        Edit Profile
+      </a>
+      <form method="post" action="{{ url_for('auth.logout') }}" class="inline" style="margin:0;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="quick-act" type="submit" style="width:100%;background:none;border:1px solid var(--border);cursor:pointer;font:inherit;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5M21 12H9"></path></svg>
+          Logout
+        </button>
+      </form>
+    </div>
+  </section>
+</div>
+
+{% if applications %}
+<section class="card">
+  <div class="section-head">
+    <h2>All your applications</h2>
+    <span class="muted">{{ applications|length }} total</span>
+  </div>
+  <div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Application #</th><th>Course</th><th>Status</th><th>Submitted</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for app in applications %}
+      <tr>
+        <td>{{ app.application_number or "Draft" }}</td>
+        <td>{{ app.courses.name if app.courses else "—" }}</td>
+        <td><span class="pill status-{{ app.status }}">{{ status_labels.get(app.status, app.status) }}</span></td>
+        <td>{{ app.submitted_at[:10] if app.submitted_at else "Not submitted" }}</td>
+        <td><a class="btn btn-sm btn-outline" href="{{ url_for('student.application_detail', application_id=app.id) }}">Open</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

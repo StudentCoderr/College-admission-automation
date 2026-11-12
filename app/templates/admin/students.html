@@ -1,0 +1,108 @@
+{% extends "admin/base.html" %}
+{% block title %}Students — {{ app_name }}{% endblock %}
+{% block page_title %}Students{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Students management</h1>
+    <p class="muted">{{ total }} registered student{{ '' if total == 1 else 's' }}.</p>
+  </div>
+  <a class="btn" href="{{ url_for('admin.student_new') }}">+ Add Student</a>
+</div>
+
+<form class="filter-bar card" method="get" action="{{ url_for('admin.students') }}">
+  <div class="field grow">
+    <label for="q">Search</label>
+    <input type="text" id="q" name="q" value="{{ filters.q }}"
+           placeholder="Name, email, phone or registration number">
+  </div>
+  <div class="field">
+    <label for="status">Account status</label>
+    <select id="status" name="status">
+      <option value="" {% if not filters.status %}selected{% endif %}>All</option>
+      <option value="active" {% if filters.status == 'active' %}selected{% endif %}>Active</option>
+      <option value="inactive" {% if filters.status == 'inactive' %}selected{% endif %}>Inactive</option>
+      <option value="withdrawn" {% if filters.status == 'withdrawn' %}selected{% endif %}>Withdrawn</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="sort">Sort by</label>
+    <select id="sort" name="sort">
+      <option value="created_at" {% if filters.sort == 'created_at' %}selected{% endif %}>Registration date</option>
+      <option value="name" {% if filters.sort == 'name' %}selected{% endif %}>Name</option>
+      <option value="email" {% if filters.sort == 'email' %}selected{% endif %}>Email</option>
+      <option value="status" {% if filters.sort == 'status' %}selected{% endif %}>Status</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="order">Order</label>
+    <select id="order" name="order">
+      <option value="desc" {% if filters.order == 'desc' %}selected{% endif %}>Descending</option>
+      <option value="asc" {% if filters.order == 'asc' %}selected{% endif %}>Ascending</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>&nbsp;</label>
+    <button class="btn" type="submit">Apply</button>
+  </div>
+</form>
+
+{% if students %}
+<div class="table-wrap">
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th><th>Email</th><th>Phone</th>
+      <th>Registration no.</th><th>Registered on</th>
+      <th>Applications</th><th>Status</th><th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for s in students %}
+    {% set state = s.status or ('active' if s.is_active else 'inactive') %}
+    <tr>
+      <td><a href="{{ url_for('admin.student_detail', user_id=s.id) }}">{{ s.full_name }}</a></td>
+      <td>{{ s.email }}</td>
+      <td>{{ s.phone or "—" }}</td>
+      <td>{{ s.registration_number or "—" }}</td>
+      <td>{{ s.created_at or "—" }}</td>
+      <td><span class="pill">{{ s.applications_count }}</span></td>
+      <td>
+        {% if state == 'active' %}<span class="pill status-approved">Active</span>
+        {% elif state == 'withdrawn' %}<span class="pill status-withdrawn">Withdrawn</span>
+        {% else %}<span class="pill status-inactive">Inactive</span>{% endif %}
+      </td>
+      <td class="row-actions">
+        <a class="btn btn-sm btn-outline" href="{{ url_for('admin.student_detail', user_id=s.id) }}">View</a>
+        <a class="btn btn-sm btn-outline" href="{{ url_for('admin.student_edit', user_id=s.id) }}">Edit</a>
+        <a class="btn btn-sm btn-danger" href="{{ url_for('admin.student_delete', user_id=s.id) }}">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+{% if pages > 1 %}
+<nav class="pager">
+  {% set args = {'q': filters.q, 'status': filters.status, 'sort': filters.sort, 'order': filters.order} %}
+  {% if page > 1 %}
+    <a class="btn btn-sm btn-outline" href="{{ url_for('admin.students', page=page-1, **args) }}">&larr; Previous</a>
+  {% endif %}
+  <span class="muted">Page {{ page }} of {{ pages }}</span>
+  {% if page < pages %}
+    <a class="btn btn-sm btn-outline" href="{{ url_for('admin.students', page=page+1, **args) }}">Next &rarr;</a>
+  {% endif %}
+</nav>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+  <span class="es-ico">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+  </span>
+  <h3>No students found</h3>
+  <p>No students match your search. Use “Add Student” to create one.</p>
+</div>
+{% endif %}
+{% endblock %}

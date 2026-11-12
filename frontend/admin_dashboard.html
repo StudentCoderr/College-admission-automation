@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard — Evergreen Institute of Technology</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body data-page="admin_dashboard" data-guard="admin">
+  <div id="site-header"></div>
+
+  <main>
+    <section class="dash-head">
+      <div class="container flex-between flex-wrap">
+        <div>
+          <h1>Admissions dashboard</h1>
+          <p>Review, verify and decide on student applications.</p>
+        </div>
+        <div class="dash-actions">
+          <button class="btn btn-light" type="button" id="exportBtn">Export CSV</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="grid grid-4 mb-3" id="statsRow"></div>
+
+      <div class="grid grid-2 mb-3">
+        <div class="card">
+          <div class="card-title"><h2 class="mb-0">Applications by status</h2></div>
+          <div class="chart" id="statusChart"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><h2 class="mb-0">Admission snapshot</h2></div>
+          <div class="summary-row"><span class="k">Academic year</span><span class="v">2026–27</span></div>
+          <div class="summary-row"><span class="k">Applications window</span><span class="v">01 Jun – 31 Jul 2026</span></div>
+          <div class="summary-row"><span class="k">Document verification</span><span class="v">From 10 Aug 2026</span></div>
+          <div class="summary-row"><span class="k">Counselling starts</span><span class="v">25 Aug 2026</span></div>
+          <p class="small muted mt-2 mb-0">Sample figures for the frontend preview.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="flex-between flex-wrap mb-2">
+          <h2 class="mb-0">Applications</h2>
+          <span class="muted small" id="resultCount">—</span>
+        </div>
+
+        <div class="filter-bar mb-3">
+          <div class="form-group grow">
+            <label class="form-label" for="adminSearch">Search</label>
+            <input class="form-control" type="search" id="adminSearch" placeholder="Application number, applicant or email…">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="statusFilter">Status</label>
+            <select class="form-control" id="statusFilter">
+              <option value="">All statuses</option>
+              <option value="draft">Draft</option>
+              <option value="submitted">Submitted</option>
+              <option value="under_review">Under Review</option>
+              <option value="correction_requested">Correction Requested</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="applicationsHost"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/sample-data.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/validation.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/pages/admin-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+{% extends "admin/base.html" %}
+{% block title %}Applications — {{ app_name }}{% endblock %}
+{% block page_title %}Admission Applications{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Applications</h1>
+    <p class="muted">Review submitted applications, verify documents and record decisions.</p>
+  </div>
+  <a class="btn btn-outline"
+     href="{{ url_for('admin.export_applications', status=filters.status, course_id=filters.course_id, q=filters.q, date_from=filters.date_from, date_to=filters.date_to) }}">
+    Export filtered CSV
+  </a>
+</div>
+
+<form class="filter-bar card" method="get" action="{{ url_for('admin.applications') }}">
+  <div class="field grow">
+    <label for="q">Search</label>
+    <input type="text" id="q" name="q" value="{{ filters.q }}"
+           placeholder="Application number, name or email">
+  </div>
+  <div class="field">
+    <label for="status">Status</label>
+    <select id="status" name="status">
+      <option value="">All</option>
+      {% for s in statuses %}
+        <option value="{{ s }}" {% if filters.status == s %}selected{% endif %}>{{ status_labels.get(s, s) }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="course_id">Course</label>
+    <select id="course_id" name="course_id">
+      <option value="">All</option>
+      {% for c in courses %}
+        <option value="{{ c.id }}" {% if filters.course_id|string == c.id|string %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="date_from">From date</label>
+    <input type="date" id="date_from" name="date_from" value="{{ filters.date_from }}">
+  </div>
+  <div class="field">
+    <label for="date_to">To date</label>
+    <input type="date" id="date_to" name="date_to" value="{{ filters.date_to }}">
+  </div>
+  <div class="field">
+    <label>&nbsp;</label>
+    <button class="btn" type="submit">Apply filters</button>
+  </div>
+</form>
+
+<p class="muted">{{ applications|length }} application(s) found.</p>
+
+{% if applications %}
+<div class="table-wrap">
+<table class="table">
+  <thead>
+    <tr><th>Application #</th><th>Applicant</th><th>Email</th><th>Course</th><th>Qualification</th><th>Marks %</th><th>Status</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for app in applications %}
+    <tr>
+      <td><a href="{{ url_for('admin.application_detail', application_id=app.id) }}">{{ app.application_number or "(draft)" }}</a></td>
+      <td>{{ person_name(app) }}</td>
+      <td>{{ app.email }}</td>
+      <td>{{ app.courses.name if app.courses else "—" }}</td>
+      <td>{{ QUALIFICATION_LABELS.get((app.qualifying_exam or '').lower(), app.qualifying_exam or "—") }}</td>
+      <td>{{ app.percentage or "—" }}</td>
+      <td><span class="pill status-{{ app.status }}">{{ status_labels.get(app.status, app.status) }}</span></td>
+      <td><a class="btn btn-sm btn-outline" href="{{ url_for('admin.application_detail', application_id=app.id) }}">Review</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<div class="empty-state">
+  <span class="es-ico">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M16 13H8M16 17H8"></path></svg>
+  </span>
+  <h3>No applications found</h3>
+  <p>No applications match your filters.</p>
+</div>
+{% endif %}
+{% endblock %}

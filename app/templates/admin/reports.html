@@ -1,0 +1,112 @@
+{% extends "admin/base.html" %}
+{% block title %}Reports — {{ app_name }}{% endblock %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Admission reports</h1>
+    <p class="muted">Figures are loaded live from Supabase.</p>
+  </div>
+  <a class="btn btn-outline" href="{{ url_for('admin.export_applications') }}">Export applications (CSV)</a>
+</div>
+
+<div class="grid grid-4 stats">
+  <div class="stat"><span class="stat-value">{{ counts.total }}</span><span class="stat-label">Applications</span></div>
+  <div class="stat stat-warning"><span class="stat-value">{{ counts.submitted + counts.under_review + counts.correction_requested }}</span><span class="stat-label">Pending</span></div>
+  <div class="stat stat-success"><span class="stat-value">{{ counts.approved }}</span><span class="stat-label">Approved</span></div>
+  <div class="stat stat-danger"><span class="stat-value">{{ counts.rejected }}</span><span class="stat-label">Rejected</span></div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <div class="section-head"><h2>Applications by status</h2></div>
+    <div class="chart-wrap">
+      <canvas id="chart-status" height="220" data-chart="donut"
+              data-values='{{ status_chart|tojson }}'></canvas>
+    </div>
+    <ul class="chart-legend">
+      {% for item in status_chart %}
+        <li><span class="legend-dot dot-{{ item.key }}"></span>{{ item.label }} <strong>{{ item.value }}</strong></li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="card">
+    <div class="section-head"><h2>Course mix</h2></div>
+    <div class="chart-wrap">
+      <canvas id="chart-course-mix" height="220" data-chart="donut"
+              data-values='{{ [
+                {"label": "Degree", "value": course_counts.degree},
+                {"label": "Diploma", "value": course_counts.diploma}
+              ]|tojson }}'></canvas>
+    </div>
+    <ul class="chart-legend">
+      <li><span class="legend-dot dot-approved"></span>Degree <strong>{{ course_counts.degree }}</strong></li>
+      <li><span class="legend-dot dot-submitted"></span>Diploma <strong>{{ course_counts.diploma }}</strong></li>
+    </ul>
+  </section>
+</div>
+
+<section class="card">
+  <div class="section-head"><h2>Applications per month</h2></div>
+  {% if monthly %}
+    <div class="chart-wrap">
+      <canvas id="chart-monthly" height="240" data-chart="line"
+              data-values='{{ monthly|tojson }}'></canvas>
+    </div>
+  {% else %}
+    <p class="muted">No data yet.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <div class="section-head"><h2>Applications by course</h2></div>
+  {% if course_stats %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Code</th><th>Course</th><th>Type</th><th>Applications</th><th>Seats</th><th>Available</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for c in course_stats %}
+      <tr>
+        <td>{{ c.code }}</td>
+        <td>{{ c.name }}</td>
+        <td><span class="pill {{ 'pill-diploma' if c.program_type == 'diploma' else 'pill-degree' }}">{{ (c.program_type or 'degree')|title }}</span></td>
+        <td>{{ c.applications_count }}</td>
+        <td>{{ c.seats_total }}</td>
+        <td>{{ c.seats_available }}</td>
+        <td>{% if c.is_active %}<span class="pill status-approved">Active</span>{% else %}<span class="pill status-rejected">Inactive</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">No courses yet.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <div class="section-head"><h2>Recent administrative activity</h2></div>
+  {% if audit %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>When</th><th>Administrator</th><th>Action</th><th>Details</th></tr></thead>
+    <tbody>
+      {% for entry in audit %}
+      <tr>
+        <td>{{ entry.created_at }}</td>
+        <td>{{ entry.actor_email or "—" }}</td>
+        <td><span class="pill">{{ entry.action }}</span></td>
+        <td>{{ entry.details or "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">No administrative activity recorded yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+# Secrets - never commit
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+venv/
+.venv/
+env/
+.python-version
+
+# Flask
+instance/
+.webassets-cache
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Uploads (documents live in Supabase Storage, not on disk)
+uploads/
+
+# Local-only quick-start notes (contain local test credentials)
+START_HERE.txt

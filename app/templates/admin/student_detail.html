@@ -1,0 +1,142 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ student.full_name }} — {{ app_name }}{% endblock %}
+{% block page_title %}Student profile{% endblock %}
+{% block content %}
+{% set state = student.status or ('active' if student.is_active else 'inactive') %}
+<div class="page-head">
+  <div>
+    <h1>{{ student.full_name }}</h1>
+    <p class="muted">
+      Status:
+      {% if state == 'active' %}<span class="pill status-approved">Active</span>
+      {% elif state == 'withdrawn' %}<span class="pill status-withdrawn">Withdrawn</span>
+      {% else %}<span class="pill status-inactive">Inactive</span>{% endif %}
+    </p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn-outline" href="{{ url_for('admin.students') }}">&larr; Back to students</a>
+    <a class="btn" href="{{ url_for('admin.student_edit', user_id=student.id) }}">Edit Student</a>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.8rem;">
+      <span class="profile-avatar">{{ (student.full_name or 'S')[0]|upper }}</span>
+      <div>
+        <h2 style="margin:0 0 .1rem;">{{ student.full_name }}</h2>
+        <p class="muted" style="margin:0;">{{ student.email }}</p>
+      </div>
+    </div>
+    <h3>Account details</h3>
+    <dl class="details">
+      <dt>First name</dt><dd>{{ student.first_name or "—" }}</dd>
+      <dt>Middle name</dt><dd>{{ student.middle_name or "—" }}</dd>
+      <dt>Last name</dt><dd>{{ student.last_name or "—" }}</dd>
+      <dt>Email address</dt><dd>{{ student.email or "—" }}</dd>
+      <dt>Phone</dt><dd>{{ student.phone or "—" }}</dd>
+      <dt>Registration no.</dt><dd>{{ student.registration_number or "—" }}</dd>
+      <dt>Assigned course</dt>
+      <dd>
+        {% if assigned_course %}
+          {{ assigned_course.name }}
+          <small class="muted">({{ assigned_course.code }} · {{ assigned_course.program_type|title }})</small>
+        {% else %}—{% endif %}
+      </dd>
+      <dt>Role</dt><dd>{{ student.role|title }}</dd>
+      <dt>Registered on</dt><dd>{{ student.created_at or "—" }}</dd>
+      <dt>Last updated</dt><dd>{{ student.updated_at or "—" }}</dd>
+    </dl>
+    <p class="muted small-note">
+      Password hashes and other credentials are never shown here.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Account status</h2>
+    <p class="muted small-note">
+      Inactive and withdrawn accounts cannot sign in or submit new admission
+      applications. Existing applications and decisions are always preserved.
+    </p>
+    <form method="post" action="{{ url_for('admin.set_student_status', user_id=student.id) }}"
+          class="stack">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field">
+        <label for="status">Set status</label>
+        <select id="status" name="status">
+          {% for option in student_statuses %}
+          <option value="{{ option }}" {% if state == option %}selected{% endif %}>
+            {{ student_status_labels.get(option, option|title) }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="reason">Reason (optional)</label>
+        <input type="text" id="reason" name="reason" maxlength="200"
+               placeholder="e.g. student withdrew on 12 Oct">
+      </div>
+      <button class="btn" type="submit" data-loading="Updating…">Update status</button>
+    </form>
+
+    <hr class="divider">
+    <h3>Password setup</h3>
+    <form method="post" action="{{ url_for('admin.student_invite', user_id=student.id) }}" class="inline">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="btn btn-outline" type="submit" data-loading="Generating…">Resend password setup link</button>
+    </form>
+    <p class="muted small-note">
+      Generates a fresh one-time link the student uses to set their own
+      password. No password is ever shown or stored in plain text.
+    </p>
+  </section>
+</div>
+
+<section class="card">
+  <div class="section-head">
+    <h2>Admission applications</h2>
+    <span class="muted">{{ applications|length }} application(s)</span>
+  </div>
+  {% if applications %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Application #</th><th>Course</th><th>Status</th><th>Submitted</th><th>Reviewed</th><th>Admin note</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for app in applications %}
+      <tr>
+        <td><a href="{{ url_for('admin.application_detail', application_id=app.id) }}">{{ app.application_number or "(draft)" }}</a></td>
+        <td>
+          {{ (app.courses or {}).get('name') or "—" }}
+          {% if (app.courses or {}).get('code') %}<br><small class="muted">{{ app.courses.get('code') }}</small>{% endif %}
+        </td>
+        <td><span class="pill status-{{ app.status }}">{{ status_labels.get(app.status, app.status) }}</span></td>
+        <td>{{ app.submitted_at or "—" }}</td>
+        <td>{{ app.reviewed_at or "—" }}</td>
+        <td>{{ app.admin_note or "—" }}</td>
+        <td>
+          <a class="btn btn-sm btn-outline" href="{{ url_for('admin.application_detail', application_id=app.id) }}">Review</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">This student has not started any application yet.</p>
+  {% endif %}
+</section>
+
+<section class="card danger-zone">
+  <h2>Permanently delete student</h2>
+  <p class="muted">
+    This removes the student and all associated admission records. Only use it
+    when permitted by college policy. To retain history instead, set the status
+    to Inactive or Withdrawn above.
+  </p>
+  <a class="btn btn-danger" href="{{ url_for('admin.student_delete', user_id=student.id) }}">
+    Delete student permanently…
+  </a>
+</section>
+{% endblock %}

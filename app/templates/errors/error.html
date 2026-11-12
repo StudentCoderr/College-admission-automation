@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Error {{ code }}{% endblock %}
+{% block content %}
+<div class="error-page">
+  <div class="error-ico">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4m0 4h.01"></path></svg>
+  </div>
+  <h1 class="error-code">{{ code }}</h1>
+  <p class="muted" style="max-width:46ch;margin:0 auto 1.4rem;">{{ message }}</p>
+  <div class="page-actions" style="justify-content:center;">
+    <a class="btn" href="{{ url_for('main.index') }}">Back to home</a>
+    <a class="btn btn-outline" href="javascript:history.back()">Go back</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,337 @@
+{# Shared application form. Expects: courses, form, errors, application (may be None) #}
+<form method="post" novalidate
+      action="{{ url_for('student.edit_application', application_id=application.id) if application else url_for('student.apply') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  <fieldset>
+    <legend>1 &middot; Personal information</legend>
+    <div class="grid grid-2">
+      <div class="field {% if errors.first_name %}has-error{% endif %}">
+        <label for="first_name">First name *</label>
+        <input type="text" id="first_name" name="first_name" maxlength="120" required
+               value="{{ form.first_name or '' }}" autocomplete="given-name">
+        {% if errors.first_name %}<small class="error">{{ errors.first_name }}</small>{% endif %}
+      </div>
+      <div class="field {% if errors.middle_name %}has-error{% endif %}">
+        <label for="middle_name">Middle name <small class="hint">(optional)</small></label>
+        <input type="text" id="middle_name" name="middle_name" maxlength="120"
+               value="{{ form.middle_name or '' }}" autocomplete="additional-name">
+        {% if errors.middle_name %}<small class="error">{{ errors.middle_name }}</small>{% endif %}
+      </div>
+      <div class="field {% if errors.last_name %}has-error{% endif %}">
+        <label for="last_name">Last name <small class="hint">(optional)</small></label>
+        <input type="text" id="last_name" name="last_name" maxlength="120"
+               value="{{ form.last_name or '' }}" autocomplete="family-name">
+        {% if errors.last_name %}<small class="error">{{ errors.last_name }}</small>{% endif %}
+      </div>
+      <div class="field {% if errors.date_of_birth %}has-error{% endif %}">
+        <label for="date_of_birth">Date of birth *</label>
+        <input type="date" id="date_of_birth" name="date_of_birth" required value="{{ form.date_of_birth or '' }}">
+        {% if errors.date_of_birth %}<small class="error">{{ errors.date_of_birth }}</small>{% endif %}
+      </div>
+      <div class="field {% if errors.gender %}has-error{% endif %}">
+        <label for="gender">Gender *</label>
+        <select id="gender" name="gender" required>
+          <option value="">Select…</option>
+          {% for option in ['male','female','other','prefer_not_to_say'] %}
+            <option value="{{ option }}" {% if form.gender == option %}selected{% endif %}>{{ option.replace('_',' ')|title }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.gender %}<small class="error">{{ errors.gender }}</small>{% endif %}
+      </div>
+      <div class="field {% if errors.category %}has-error{% endif %}">
+        <label for="category">Category</label>
+        <select id="category" name="category">
+          <option value="">Select…</option>
+          {% for option in ['general','obc','sc','st','ews','other'] %}
+            <option value="{{ option }}" {% if form.category == option %}selected{% endif %}>{{ option|upper }}</option>
+          {% endfor %}
+        </select>
+        {% if errors.category %}<small class="error">{{ errors.category }}</small>{% endif %}
+      </div>
+      <div class="field">
+        <label for="nationality">Nationality</label>
+        <input type="text" id="nationality" name="nationality" maxlength="60" value="{{ form.nationality or 'Indian' }}">
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>2 &middot; Contact details</legend>
+    <div class="grid grid-2">
+      <div class="field {% if errors.email %}has-error{% endif %}">
+        <label for="email">Contact email *</label>
+        <input type="email" id="email" name="email" maxlength="254" required
+               autocomplete="email" value="{{ form.email or '' }}">
+        {% if errors.email %}<small class="error">{{ errors.email }}</small>{% endif %}
+      </div>
+      <div class="field {% if errors.phone %}has-error{% endif %}">
+        <label for="phone">Phone *</label>
+        <input type="tel" id="phone" name="phone" maxlength="20" required
+               autocomplete="tel" value="{{ form.phone or '' }}">
+        {% if errors.phone %}<small class="error">{{ errors.phone }}</small>{% endif %}
+      </div>
+    </div>
+    <div class="field {% if errors.address_line %}has-error{% endif %}">
+      <label for="address_line">Address *</label>
+      <input type="text" id="address_line" name="address_line" maxlength="200" required value="{{ form.address_line or '' }}">
+      {% if errors.address_line %}<small class="error">{{ errors.address_line }}</small>{% endif %}
+    </div>
+    <div class="grid grid-3">
+      <div class="field {% if errors.city %}has-error{% endif %}">
+        <label for="city">City *</label>
+        <input type="text" id="city" name="city" maxlength="80" required value="{{ form.city or '' }}">
+        {% if errors.city %}<small class="error">{{ errors.city }}</small>{% endif %}
+      </div>
+      <div class="field {% if errors.state %}has-error{% endif %}">
+        <label for="state">State *</label>
+        <input type="text" id="state" name="state" maxlength="80" required value="{{ form.state or '' }}">
+        {% if errors.state %}<small class="error">{{ errors.state }}</small>{% endif %}
+      </div>
+      <div class="field {% if errors.postal_code %}has-error{% endif %}">
+        <label for="postal_code">Postal code *</label>
+        <input type="text" id="postal_code" name="postal_code" maxlength="12" required value="{{ form.postal_code or '' }}">
+        {% if errors.postal_code %}<small class="error">{{ errors.postal_code }}</small>{% endif %}
+      </div>
+    </div>
+    <div class="field">
+      <label for="country">Country</label>
+      <input type="text" id="country" name="country" maxlength="60" value="{{ form.country or 'India' }}">
+    </div>
+  </fieldset>
+
+  <fieldset data-qualification-form>
+    <legend>3 &middot; Academic details</legend>
+    <div class="grid grid-2">
+      <div class="field {% if errors.qualifying_exam %}has-error{% endif %}">
+        <label for="qualifying_exam">Previous Education / Qualification *</label>
+        <select id="qualifying_exam" name="qualifying_exam" required data-qualification-select>
+          <option value="">Select your qualification…</option>
+          {% for key, label in QUALIFICATION_LABELS.items() %}
+            <option value="{{ key }}" {% if form.qualifying_exam == key %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+        <small class="hint">Select the qualification that applies to you — only the relevant fields are shown.</small>
+        {% if errors.qualifying_exam %}<small class="error">{{ errors.qualifying_exam }}</small>{% endif %}
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="field {% if errors.institution_name %}has-error{% endif %}">
+        <label for="institution_name"><span data-institution-label>School name</span> *</label>
+        <input type="text" id="institution_name" name="institution_name" maxlength="150" required
+               value="{{ form.institution_name or form.school_name or '' }}"
+               placeholder="Official name of your school / college / ITI institute">
+        {% if errors.institution_name %}<small class="error">{{ errors.institution_name }}</small>{% endif %}
+      </div>
+
+      <div class="field {% if errors.board_university %}has-error{% endif %}" data-qual-field="sslc puc">
+        <label for="board_university">Board *</label>
+        <input type="text" id="board_university" name="board_university" maxlength="120"
+               value="{{ form.board_university or '' }}"
+               placeholder="e.g. Karnataka SSLC Board, PUC Board, CBSE">
+        {% if errors.board_university %}<small class="error">{{ errors.board_university }}</small>{% endif %}
+      </div>
+
+      <div class="field {% if errors.stream %}has-error{% endif %}" data-qual-field="puc">
+        <label for="stream">Stream *</label>
+        <select id="stream" name="stream">
+          <option value="">Select…</option>
+          <option value="science" {% if form.stream == 'science' %}selected{% endif %}>Science</option>
+          <option value="commerce" {% if form.stream == 'commerce' %}selected{% endif %}>Commerce</option>
+          <option value="arts" {% if form.stream == 'arts' %}selected{% endif %}>Arts</option>
+          <option value="other" {% if form.stream == 'other' %}selected{% endif %}>Other</option>
+          <option value="na">Not applicable</option>
+        </select>
+        <small class="hint">Choose "Not applicable" if your course does not use a stream.</small>
+        {% if errors.stream %}<small class="error">{{ errors.stream }}</small>{% endif %}
+      </div>
+
+      <div class="field {% if errors.trade %}has-error{% endif %}" data-qual-field="iti">
+        <label for="trade">Trade / specialization *</label>
+        <input type="text" id="trade" name="trade" maxlength="100" value="{{ form.trade or '' }}"
+               placeholder="e.g. Fitter, Electrician, COPA, Mechanic (Motor Vehicle)">
+        {% if errors.trade %}<small class="error">{{ errors.trade }}</small>{% endif %}
+      </div>
+
+      <div class="field {% if errors.affiliation %}has-error{% endif %}" data-qual-field="iti">
+        <label for="affiliation">Affiliation</label>
+        <select id="affiliation" name="affiliation">
+          <option value="">Select…</option>
+          <option value="ncvt" {% if form.affiliation == 'ncvt' %}selected{% endif %}>NCVT</option>
+          <option value="scvt" {% if form.affiliation == 'scvt' %}selected{% endif %}>SCVT</option>
+          <option value="other" {% if form.affiliation == 'other' %}selected{% endif %}>Other</option>
+          <option value="na">Not applicable</option>
+        </select>
+        <small class="hint">Optional — choose "Not applicable" if the institute has no affiliation.</small>
+        {% if errors.affiliation %}<small class="error">{{ errors.affiliation }}</small>{% endif %}
+      </div>
+
+      <div class="field">
+        <label for="roll_number">Registration / roll number <span class="muted">(if applicable)</span></label>
+        <input type="text" id="roll_number" name="roll_number" maxlength="40" value="{{ form.roll_number or '' }}"
+               placeholder="Optional — hall ticket / registration number">
+      </div>
+
+      <div class="field {% if errors.passing_year %}has-error{% endif %}">
+        <label for="passing_year">Year of passing *</label>
+        <input type="number" id="passing_year" name="passing_year" min="1950" max="2100" required value="{{ form.passing_year or '' }}">
+        {% if errors.passing_year %}<small class="error">{{ errors.passing_year }}</small>{% endif %}
+      </div>
+
+      <div class="field {% if errors.marks_obtained %}has-error{% endif %}">
+        <label for="marks_obtained">Marks obtained <span class="muted">(optional)</span></label>
+        <input type="number" step="0.01" min="0" id="marks_obtained" name="marks_obtained"
+               value="{{ form.marks_obtained if form.marks_obtained is not none else '' }}">
+        <small class="hint">Leave blank if you do not have marks / percentage details.</small>
+        {% if errors.marks_obtained %}<small class="error">{{ errors.marks_obtained }}</small>{% endif %}
+      </div>
+
+      <div class="field {% if errors.marks_total %}has-error{% endif %}">
+        <label for="marks_total">Maximum marks <span class="muted">(if marks-based entry)</span></label>
+        <input type="number" step="0.01" min="1" id="marks_total" name="marks_total"
+               value="{{ form.marks_total if form.marks_total is not none else '' }}">
+        <small class="hint">Only for systems that use maximum marks.</small>
+        {% if errors.marks_total %}<small class="error">{{ errors.marks_total }}</small>{% endif %}
+      </div>
+
+      <div class="field {% if errors.percentage %}has-error{% endif %}">
+        <label for="percentage">Percentage <span class="muted">(optional — auto-calculated)</span></label>
+        <input type="number" step="0.01" min="0" max="100" id="percentage" name="percentage"
+               value="{{ form.percentage if form.percentage is not none else '' }}">
+        <small class="hint">Leave blank to calculate automatically from the marks above.</small>
+        {% if errors.percentage %}<small class="error">{{ errors.percentage }}</small>{% endif %}
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>4 &middot; Preferred course</legend>
+    <p class="hint" style="margin:0 0 .6rem;">Only courses that are currently accepting applications are listed.</p>
+    <div class="course-picker" data-course-picker>
+      <div class="filter-bar">
+        <div class="field grow">
+          <label for="course-search">Search courses</label>
+          <input type="search" id="course-search" data-course-search
+                 placeholder="Search by course name, branch or code…">
+        </div>
+        <div class="field">
+          <label for="course-type-filter">Programme type</label>
+          <select id="course-type-filter" data-course-type>
+            <option value="">All programmes</option>
+            <option value="degree">Degree</option>
+            <option value="diploma">Diploma / Polytechnic</option>
+          </select>
+        </div>
+      </div>
+
+      {% if courses %}
+      <div class="course-options" data-course-options>
+        {% for course in courses %}
+          <div class="course-option {% if form.course_id|string == course.id|string %}is-selected{% endif %}"
+               data-course-card data-name="{{ course.name }}" data-code="{{ course.code }}"
+               data-type="{{ course.program_type or 'degree' }}"
+               data-search="{{ (course.name ~ ' ' ~ course.code ~ ' ' ~ (course.eligibility or ''))|lower }}">
+            <label class="course-option-select">
+              <input type="radio" name="course_id" value="{{ course.id }}"
+                     {% if form.course_id|string == course.id|string %}checked{% endif %} required>
+              <span class="course-option-body">
+                <span class="course-option-head">
+                  <strong>{{ course.name }}</strong>
+                  <span class="badge">{{ course.code }}</span>
+                  <span class="pill {{ 'pill-diploma' if course.program_type == 'diploma' else 'pill-degree' }}">
+                    {{ (course.program_type or 'degree')|title }}
+                  </span>
+                </span>
+                <span class="meta">
+                  Duration: {{ course.duration_years }} year(s) ·
+                  Seats: {{ course.seats_total }} ·
+                  Fee:
+                  {% if course.tuition_fee %}₹{{ "{:,.2f}".format(course.tuition_fee) }}/year{% else %}Contact office{% endif %}
+                </span>
+                {% if course.eligibility %}<span class="hint">Eligibility: {{ course.eligibility }}</span>{% endif %}
+                {% if course.eligible_qualifications %}
+                  <span class="hint">Eligible for: {% for q in course.eligible_qualifications %}{{ QUALIFICATION_LABELS.get(q, q) }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+                {% else %}
+                  <span class="hint">Open to all qualifications</span>
+                {% endif %}
+              </span>
+            </label>
+            <a class="btn btn-sm btn-outline" target="_blank" rel="noopener"
+               href="{{ url_for('main.course_detail', course_id=course.id) }}">View details</a>
+          </div>
+        {% endfor %}
+      </div>
+      <p class="muted center" data-course-empty hidden>No courses match your search.</p>
+      {% else %}
+      <div class="empty-state">
+        <span class="es-ico">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"></path></svg>
+        </span>
+        {% if course_error %}
+          <h3>Courses are temporarily unavailable</h3>
+          <p>We could not load the course list just now, so you cannot pick a course yet. Please refresh the page or try again shortly.</p>
+        {% else %}
+          <h3>No courses are currently available</h3>
+          <p>New programmes are added by the admissions office. Please check back soon.</p>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% if errors.course_id %}<small class="error">{{ errors.course_id }}</small>{% endif %}
+    </div>
+  </fieldset>
+
+  <div class="card form-actions" style="box-shadow:var(--shadow-sm);display:flex;gap:.8rem;flex-wrap:wrap;align-items:center;margin-top:1.2rem;">
+    <button class="btn btn-lg" type="submit" data-loading="{{ 'Saving…' if application else 'Saving draft…' }}">{{ "Save changes" if application else "Save draft & continue" }}</button>
+    {% if application %}
+      <a class="btn btn-lg btn-outline" href="{{ url_for('student.application_detail', application_id=application.id) }}">Cancel</a>
+    {% endif %}
+    <span class="muted small-note grow">Your details are saved securely and validated on the server.</span>
+  </div>
+</form>
+
+<script>
+  {# Show/hide the education fields that are relevant to the selected
+     qualification (SSLC / PUC / ITI) and clear stale validation errors when
+     the applicant switches. Fields without a data-qual-field attribute are
+     common to every qualification and stay visible. #}
+  (function () {
+    "use strict";
+
+    function initQualificationForm() {
+      var fieldset = document.querySelector("[data-qualification-form]");
+      var select = fieldset && fieldset.querySelector("[data-qualification-select]");
+      if (!fieldset || !select) return;
+
+      var INSTITUTION_LABELS = { sslc: "School name", puc: "College name", iti: "ITI institute name" };
+
+      function refresh() {
+        var value = select.value;
+        var fields = fieldset.querySelectorAll("[data-qual-field]");
+        Array.prototype.forEach.call(fields, function (el) {
+          var groups = (el.getAttribute("data-qual-field") || "").split(/\s+/);
+          el.hidden = groups.indexOf(value) === -1;
+        });
+        var label = fieldset.querySelector("[data-institution-label]");
+        if (label && INSTITUTION_LABELS[value]) label.textContent = INSTITUTION_LABELS[value];
+      }
+
+      select.addEventListener("change", function () {
+        refresh();
+        // Clear obsolete validation errors from fields that no longer apply.
+        var stale = fieldset.querySelectorAll(".field.has-error");
+        Array.prototype.forEach.call(stale, function (el) { el.classList.remove("has-error"); });
+        var messages = fieldset.querySelectorAll("small.error");
+        Array.prototype.forEach.call(messages, function (el) { el.parentNode.removeChild(el); });
+      });
+
+      refresh();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initQualificationForm);
+    } else {
+      initQualificationForm();
+    }
+  })();
+</script>

@@ -1,0 +1,142 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard — {{ app_name }}{% endblock %}
+{% block page_title %}Admissions dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Admissions dashboard</h1>
+    <p class="muted">A live overview of students, applications and Polytechnic courses.</p>
+  </div>
+  <div class="page-actions">
+    <a class="btn btn-outline" href="{{ url_for('admin.reports') }}">View reports</a>
+    <a class="btn btn-outline" href="{{ url_for('admin.export_applications') }}">Export CSV</a>
+  </div>
+</div>
+
+<div class="grid grid-3 stats">
+  <div class="stat">
+    <span class="stat-value">{{ students_total }}</span>
+    <span class="stat-label">Registered students</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value">{{ counts.total }}</span>
+    <span class="stat-label">Total applications</span>
+  </div>
+  <div class="stat stat-warning">
+    <span class="stat-value">{{ counts.submitted + counts.under_review + counts.correction_requested }}</span>
+    <span class="stat-label">Pending applications</span>
+  </div>
+  <div class="stat stat-success">
+    <span class="stat-value">{{ counts.approved }}</span>
+    <span class="stat-label">Approved applications</span>
+  </div>
+  <div class="stat stat-danger">
+    <span class="stat-value">{{ counts.rejected }}</span>
+    <span class="stat-label">Rejected applications</span>
+  </div>
+  <div class="stat stat-info">
+    <span class="stat-value">{{ course_counts.diploma_active }}</span>
+    <span class="stat-label">Active Polytechnic courses</span>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card">
+    <div class="section-head"><h2>Applications by status</h2></div>
+    {% if counts.total %}
+      <div class="chart-wrap">
+        <canvas id="chart-status" height="220"
+                data-chart="donut"
+                data-values='{{ status_chart|tojson }}'></canvas>
+      </div>
+      <ul class="chart-legend">
+        {% for item in status_chart %}
+          <li>
+            <span class="legend-dot dot-{{ item.key }}"></span>
+            {{ item.label }} <strong>{{ item.value }}</strong>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No applications yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <div class="section-head"><h2>Applications by course</h2></div>
+    {% if course_chart %}
+      <div class="chart-wrap">
+        <canvas id="chart-courses" height="220"
+                data-chart="bar"
+                data-values='{{ course_chart|tojson }}'></canvas>
+      </div>
+    {% else %}
+      <p class="muted">No courses yet.</p>
+    {% endif %}
+  </section>
+</div>
+
+<section class="card">
+  <div class="section-head">
+    <h2>Applications by course</h2>
+    <a href="{{ url_for('admin.courses') }}">Manage courses &rarr;</a>
+  </div>
+  {% if course_stats %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Code</th><th>Course</th><th>Type</th><th>Applications</th><th>Total seats</th><th>Available seats</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for course in course_stats %}
+      <tr>
+        <td>{{ course.code }}</td>
+        <td>{{ course.name }}</td>
+        <td>
+          <span class="pill {{ 'pill-diploma' if course.program_type == 'diploma' else 'pill-degree' }}">
+            {{ (course.program_type or 'degree')|title }}
+          </span>
+        </td>
+        <td>{{ course.applications_count }}</td>
+        <td>{{ course.seats_total }}</td>
+        <td>{{ course.seats_available }}</td>
+        <td>{% if course.is_active %}<span class="pill status-approved">Active</span>{% else %}<span class="pill status-rejected">Inactive</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">No courses yet. Add one in <a href="{{ url_for('admin.courses') }}">Course management</a>.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <div class="section-head">
+    <h2>Recent applications</h2>
+    <a href="{{ url_for('admin.applications') }}">View all &rarr;</a>
+  </div>
+  {% if recent %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Application #</th><th>Applicant</th><th>Course</th><th>Status</th><th>Submitted</th></tr>
+    </thead>
+    <tbody>
+      {% for app in recent %}
+      <tr>
+        <td><a href="{{ url_for('admin.application_detail', application_id=app.id) }}">{{ app.application_number or "(draft)" }}</a></td>
+        <td>{{ person_name(app) }}</td>
+        <td>{{ (app.courses or {}).get('name') or "—" }}</td>
+        <td><span class="pill status-{{ app.status }}">{{ status_labels.get(app.status, app.status) }}</span></td>
+        <td>{{ app.submitted_at or "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">No applications have been submitted yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

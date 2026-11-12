@@ -1,0 +1,217 @@
+{% extends "admin/base.html" %}
+{% block title %}Review {{ application.application_number or "draft" }} — {{ app_name }}{% endblock %}
+{% block page_title %}Review application{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <span class="eyebrow">Application review</span>
+    <h1>Application {{ application.application_number or "(draft)" }}</h1>
+    <p class="muted">
+      Current status:
+      <span class="pill status-{{ application.status }}">{{ status_labels.get(application.status, application.status) }}</span>
+    </p>
+  </div>
+  <a class="btn btn-outline" href="{{ url_for('admin.applications') }}">&larr; Back to list</a>
+</div>
+
+{% if application.status != 'rejected' and application.status != 'draft' %}
+<section class="card">
+  <h2>Progress</h2>
+  {% set idx = {'draft':0,'submitted':1,'under_review':2,'correction_requested':2,'approved':3,'rejected':-1}.get(application.status, 0) %}
+  <div class="progress-track" aria-label="Admission progress">
+    {% set steps = [
+      {'key':'draft','label':'Started'},
+      {'key':'submitted','label':'Submitted'},
+      {'key':'under_review','label':'Under review'},
+      {'key':'approved','label':'Approved'}
+    ] %}
+    {% for step in steps %}
+      <div class="progress-step {% if loop.index0 < idx %}done{% elif loop.index0 == idx %}{{ 'done' if application.status == 'approved' else 'current' }}{% endif %}">
+        <span class="p-dot">
+          {% if loop.index0 < idx or application.status == 'approved' %}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
+          {% else %}{{ loop.index }}{% endif %}
+        </span>
+        <span class="p-label">{{ step.label }}</span>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<div class="grid grid-2">
+  <section class="card">
+    <h2>Personal &amp; contact</h2>
+    <dl class="details">
+      <dt>Name</dt><dd>{{ person_name(application) }}</dd>
+      <dt>Date of birth</dt><dd>{{ application.date_of_birth or "—" }}</dd>
+      <dt>Gender</dt><dd>{{ (application.gender or "—")|title }}</dd>
+      <dt>Category</dt><dd>{{ (application.category or "—")|upper }}</dd>
+      <dt>Email</dt><dd>{{ application.email or "—" }}</dd>
+      <dt>Phone</dt><dd>{{ application.phone or "—" }}</dd>
+      <dt>Address</dt><dd>{{ application.address_line or "—" }}, {{ application.city or "—" }}, {{ application.state or "—" }} {{ application.postal_code or "" }}</dd>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2>Academic &amp; course</h2>
+    <dl class="details">
+      {% set qual = (application.qualifying_exam or "").lower() %}
+      {% set inst_labels = {"sslc": "School name", "puc": "College name", "iti": "ITI institute name"} %}
+      <dt>Qualification</dt><dd>{{ QUALIFICATION_LABELS.get(qual, application.qualifying_exam or "—") }}</dd>
+      <dt>{{ inst_labels.get(qual, "School / Institution") }}</dt>
+      <dd>{{ application.institution_name or application.school_name or "—" }}</dd>
+      {% if qual in ['sslc', 'puc'] %}
+        <dt>Board</dt><dd>{{ application.board_university or "—" }}</dd>
+      {% endif %}
+      {% if qual == 'puc' %}
+        <dt>Stream</dt><dd>{{ (application.stream or "—")|title }}</dd>
+      {% endif %}
+      {% if qual == 'iti' %}
+        <dt>Trade / specialization</dt><dd>{{ application.trade or "—" }}</dd>
+        <dt>Affiliation</dt><dd>{{ (application.affiliation or "Not applicable")|upper }}</dd>
+      {% endif %}
+      <dt>Registration / roll number</dt><dd>{{ application.roll_number or "—" }}</dd>
+      <dt>Year of passing</dt><dd>{{ application.passing_year or "—" }}</dd>
+      <dt>Marks</dt><dd>{{ application.marks_obtained or "—" }} / {{ application.marks_total or "—" }} ({{ application.percentage or "—" }}%)</dd>
+      <dt>Preferred course</dt>
+      <dd>{{ application.courses.name ~ " (" ~ application.courses.code ~ ")" if application.courses else "—" }}</dd>
+    </dl>
+  </section>
+</div>
+
+<section class="card">
+  <h2>Documents</h2>
+  {% if documents %}
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Type</th><th>File</th><th>Size</th><th>Verified</th><th></th></tr></thead>
+    <tbody>
+      {% for doc in documents %}
+      <tr>
+        <td>{{ doc.doc_type.replace('_',' ')|title }}</td>
+        <td>{{ doc.file_name }}</td>
+        <td>{{ (doc.size_bytes // 1024) if doc.size_bytes else 0 }} KB</td>
+        <td>{% if doc.is_verified %}<span class="pill status-approved">Verified</span>{% else %}<span class="pill">Pending</span>{% endif %}</td>
+        <td class="row-actions">
+          <a class="btn btn-sm btn-outline" target="_blank" rel="noopener"
+             href="{{ url_for('admin.view_document', document_id=doc.id) }}">Open</a>
+          <form method="post" class="inline"
+                action="{{ url_for('admin.verify_document', document_id=doc.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="verified" value="{{ 'false' if doc.is_verified else 'true' }}">
+            <button class="btn btn-sm {{ 'btn-danger' if doc.is_verified else 'btn-success' }}" type="submit">
+              {{ 'Unverify' if doc.is_verified else 'Verify' }}
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+    <p class="muted">No documents uploaded.</p>
+  {% endif %}
+</section>
+
+{% if application.status in ['submitted', 'under_review', 'correction_requested'] %}
+<section class="card">
+  <h2>Review action</h2>
+  <form method="post" action="{{ url_for('admin.update_status', application_id=application.id) }}"
+        id="review-form" data-review-confirm novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="grid grid-2">
+      <div class="field">
+        <label for="status">Decision</label>
+        <select id="status" name="status" required>
+          <option value="under_review" {% if application.status == 'under_review' %}selected{% endif %}>Mark under review</option>
+          <option value="approved" {% if application.status == 'approved' %}selected{% endif %}>Approve</option>
+          <option value="correction_requested">Request correction</option>
+          <option value="rejected">Reject</option>
+        </select>
+      </div>
+      <div class="field grow">
+        <label for="note">Note to applicant (required for correction / rejection)</label>
+        <input type="text" id="note" name="note" maxlength="1000" value="{{ application.admin_note or '' }}">
+      </div>
+    </div>
+    <button class="btn" type="submit" data-loading="Saving decision…">Save decision</button>
+  </form>
+  <p class="muted small-note" style="margin:.7rem 0 0;">
+    The final decision is recorded in the applicant's status history with your
+    name, time and note. A confirmation step follows before anything is saved.
+  </p>
+</section>
+{% endif %}
+
+<section class="card">
+  <h2>Status history</h2>
+  {% if history %}
+  <ul class="timeline">
+    {% for item in history %}
+      <li>
+        <span class="pill status-{{ item.status }}">{{ status_labels.get(item.status, item.status) }}</span>
+        {% if item.note %}<span>{{ item.note }}</span>{% endif %}
+        <small class="muted">{{ item.created_at[:19].replace('T',' ') if item.created_at else "" }}</small>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p class="muted">No history recorded.</p>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+{% if application.status in ['submitted', 'under_review', 'correction_requested'] %}
+<script>
+  (function () {
+    "use strict";
+    document.addEventListener("DOMContentLoaded", function () {
+      var form = document.getElementById("review-form");
+      if (!form || !window.askConfirm) return;
+      var select = form.querySelector('select[name="status"]');
+      var note = form.querySelector('input[name="note"]');
+      var LABELS = {
+        under_review: "Mark as under review",
+        approved: "Approve this application",
+        correction_requested: "Request a correction",
+        rejected: "Reject this application"
+      };
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var btn = form.querySelector('button[type="submit"]');
+        if (btn && btn.disabled) return;
+        var value = select ? select.value : "";
+        var label = LABELS[value] || "Save this decision";
+        var needsNote = value === "rejected" || value === "correction_requested";
+        if (needsNote && note && !note.value.trim()) {
+          if (window.showToast) window.showToast("A note is required for rejections and correction requests.", "warning");
+          note.focus();
+          return;
+        }
+        var dangerous = value === "rejected" || value === "correction_requested";
+        window.askConfirm({
+          title: label,
+          message: dangerous
+            ? "This will record the decision and show it to the applicant. Are you sure you want to continue?"
+            : "Record this decision on the applicant's file?",
+          confirmLabel: label,
+          okClass: dangerous ? "btn-danger" : "btn-success",
+        }).then(function (ok) {
+          if (!ok) return;
+          if (btn) {
+            btn.disabled = true;
+            if (btn.hasAttribute("data-loading")) {
+              btn.textContent = btn.getAttribute("data-loading") || "Saving decision…";
+            }
+          }
+          form.submit();
+        });
+      });
+    });
+  })();
+</script>
+{% endif %}
+{% endblock %}
