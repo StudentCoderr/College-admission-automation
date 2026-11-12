@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🎓 College Admission Automation System
 
 A complete, production-ready **online** admission portal for a college. Students
@@ -34,6 +33,9 @@ for **GitHub + Render** deployment.
 18. [Admin dashboard (static console)](#admin-dashboard-static-console)
 19. [Standalone frontend preview](#standalone-frontend-preview)
 20. [Troubleshooting](#troubleshooting)
+21. [Conclusion](#conclusion)
+22. [Contact](#contact)
+23. [License](#license)
 
 ---
 
@@ -1314,10 +1316,39 @@ serve the API and frontend under the same site (or use HTTPS with
 
 ---
 
+## Conclusion
+
+The College Admission Automation System brings the complete admission workflow
+into one secure, paperless portal. Students can register, apply, upload
+documents and track their progress in real time, while administrators can manage
+courses, review applications, record decisions and export reports from a single
+dashboard.
+
+The project demonstrates a practical full-stack architecture built with Flask,
+Supabase PostgreSQL and Storage, and a responsive server-rendered UI. It is
+ready to run locally, test with the bundled pytest suite and deploy to production
+using GitHub and Render. Future enhancements could include payment integration,
+email/SMS notifications and institution-specific reporting.
+
+---
+
+## Contact
+
+- **Maintainer:** Poornashree J P
+- **Email:** [ammupoorna14@gmail.com](mailto:ammupoorna14@gmail.com)
+- **Repository:** [github.com/StudentCoderr/College-admission-automation](https://github.com/StudentCoderr/College-admission-automation)
+- **Issues & support:** [Open a GitHub issue](https://github.com/StudentCoderr/College-admission-automation/issues)
+- **GitHub:** [@StudentCoderr](https://github.com/StudentCoderr)
+- **Application support (demo):** [admissions@college.edu](mailto:admissions@college.edu)
+
+For bug reports, deployment questions or feature requests, please open a GitHub
+issue with the steps to reproduce the problem and any relevant screenshots or
+logs. Please do not post passwords, API keys or personal student information in
+public issues.
+
+---
+
 ## License
 
 Provided as a complete reference implementation for educational use. Adapt and
 extend it as needed for your institution.
-=======
-# College-admission-automation
->>>>>>> 52068cf67c3253c5aee536d2b28a4a5cef30d28c
