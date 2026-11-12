@@ -1339,7 +1339,6 @@ email/SMS notifications and institution-specific reporting.
 - **Repository:** [github.com/StudentCoderr/College-admission-automation](https://github.com/StudentCoderr/College-admission-automation)
 - **Issues & support:** [Open a GitHub issue](https://github.com/StudentCoderr/College-admission-automation/issues)
 - **GitHub:** [@StudentCoderr](https://github.com/StudentCoderr)
-- **Application support (demo):** [admissions@college.edu](mailto:admissions@college.edu)
 
 For bug reports, deployment questions or feature requests, please open a GitHub
 issue with the steps to reproduce the problem and any relevant screenshots or
