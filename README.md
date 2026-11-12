@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎓 College Admission Automation System
 
 A complete, production-ready **online** admission portal for a college. Students
@@ -1317,3 +1318,6 @@ serve the API and frontend under the same site (or use HTTPS with
 
 Provided as a complete reference implementation for educational use. Adapt and
 extend it as needed for your institution.
+=======
+# College-admission-automation
+>>>>>>> 52068cf67c3253c5aee536d2b28a4a5cef30d28c
